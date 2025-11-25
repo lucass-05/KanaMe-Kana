@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Hiragana Quiz Avanzado</title>
+  <style>
+    body { font-family: Arial; text-align: center; margin-top: 50px; }
+    input { font-size: 18px; padding: 5px; }
+    button { font-size: 18px; padding: 5px 10px; margin: 5px; }
+    #feedback { margin-top: 20px; font-weight: bold; }
+    #stats { margin-top: 20px; font-size: 18px; }
+  </style>
+</head>
+<body>
+  <h1>Hiragana Quiz Avanzado</h1>
+  <p id="hiragana" style="font-size: 60px;"></p>
+  <input type="text" id="answer" placeholder="Escribe romaji">
+  <button onclick="checkAnswer()">Enviar</button>
+  <button onclick="resetQuiz()">Empezar de nuevo</button>
+  <p id="feedback"></p>
+  <p id="stats">Aciertos: 0 | Errores: 0</p>
+
+  <script>
+    // Diccionario completo de hiragana + combinaciones
+    const hiraganaMap = {
+      'あ':'a','い':'i','う':'u','え':'e','お':'o',
+      'か':'ka','き':'ki','く':'ku','け':'ke','こ':'ko',
+      'きゃ':'kya','きゅ':'kyu','きょ':'kyo',
+      'さ':'sa','し':'shi','す':'su','せ':'se','そ':'so',
+      'しゃ':'sha','しゅ':'shu','しょ':'sho',
+      'た':'ta','ち':'chi','つ':'tsu','て':'te','と':'to',
+      'ちゃ':'cha','ちゅ':'chu','ちょ':'cho',
+      'な':'na','に':'ni','ぬ':'nu','ね':'ne','の':'no',
+      'は':'ha','ひ':'hi','ふ':'fu','へ':'he','ほ':'ho',
+      'ひゃ':'hya','ひゅ':'hyu','ひょ':'hyo',
+      'ま':'ma','み':'mi','む':'mu','め':'me','も':'mo',
+      'や':'ya','ゆ':'yu','よ':'yo',
+      'ら':'ra','り':'ri','る':'ru','れ':'re','ろ':'ro',
+      'わ':'wa','を':'wo','ん':'n'
+    };
+
+    const hiraganaKeys = Object.keys(hiraganaMap);
+    let currentChar = '';
+    let correct = 0;
+    let wrong = 0;
+
+    function randomHiragana() {
+      const idx = Math.floor(Math.random() * hiraganaKeys.length);
+      currentChar = hiraganaKeys[idx];
+      document.getElementById('hiragana').innerText = currentChar;
+      document.getElementById('answer').value = '';
+      document.getElementById('feedback').innerText = '';
+    }
+
+    function checkAnswer() {
+      const userAnswer = document.getElementById('answer').value.toLowerCase().trim();
+      if(userAnswer === hiraganaMap[currentChar]) {
+        document.getElementById('feedback').innerText = '✅ Correcto!';
+        correct++;
+      } else {
+        document.getElementById('feedback').innerText = `❌ Incorrecto. Es "${hiraganaMap[currentChar]}"`;
+        wrong++;
+      }
+      updateStats();
+      setTimeout(randomHiragana, 1000);
+    }
+
+    function updateStats() {
+      document.getElementById('stats').innerText = `Aciertos: ${correct} | Errores: ${wrong}`;
+    }
+
+    function resetQuiz() {
+      correct = 0;
+      wrong = 0;
+      updateStats();
+      randomHiragana();
+    }
+
+    // Inicializa el quiz
+    randomHiragana();
+  </script>
+</body>
+</html>
