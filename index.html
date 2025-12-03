@@ -3,9 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Hiragana Quiz</title>
+  <title>Hiragana & Katakana Quiz</title>
   <style>
-    /* Make the app occupy full viewport on mobile and desktop */
     html, body { height: 100%; margin: 0; }
     body {
       font-family: Arial;
@@ -16,7 +15,6 @@
       justify-content: center;
       padding: 20px;
       box-sizing: border-box;
-      /* Use CSS variable set by JS for mobile browser chrome issues */
       min-height: 100vh;
       min-height: calc(var(--vh, 1vh) * 100);
       flex-direction: column;
@@ -29,141 +27,115 @@
   </style>
 </head>
 <body>
-  <h1>Hiragana Quiz</h1>
+  <h1>Hiragana & Katakana Quiz</h1>
   <p id="hiragana" style="font-size: 60px;"></p>
   <input type="text" id="answer" placeholder="Escribe romaji">
-  <div style="margin-top:10px;">
-    <label style="font-size:14px; margin-right:8px">
-      <input type="checkbox" id="simpleOnly"> Mostrar solo hiraganas simples
-    </label>
+
+  <div style="margin-top:15px; font-size:14px;">
+    <label><input type="checkbox" id="simpleH" checked> Hiragana simples</label><br>
+    <label><input type="checkbox" id="complexH"> Hiragana complejos</label><br>
+    <label><input type="checkbox" id="katakana"> Katakana</label>
   </div>
+
   <button onclick="checkAnswer()">Enviar</button>
   <button onclick="resetQuiz()">Empezar de nuevo</button>
+
   <p id="feedback"></p>
   <p id="stats">Aciertos: 0 | Errores: 0</p>
 
   <script>
-    // Diccionario completo de hiragana + combinaciones
-    const hiraganaMap = {
-      // Vocales
-  'あ':'a','い':'i','う':'u','え':'e','お':'o',
-
-  // K
-  'か':'ka','き':'ki','く':'ku','け':'ke','こ':'ko',
-  'きゃ':'kya','きゅ':'kyu','きょ':'kyo',
-
-  // G
-  'が':'ga','ぎ':'gi','ぐ':'gu','げ':'ge','ご':'go',
-  'ぎゃ':'gya','ぎゅ':'gyu','ぎょ':'gyo',
-
-  // S
-  'さ':'sa','し':'shi','す':'su','せ':'se','そ':'so',
-  'しゃ':'sha','しゅ':'shu','しょ':'sho',
-
-  // Z
-  'ざ':'za','じ':'ji','ず':'zu','ぜ':'ze','ぞ':'zo',
-  'じゃ':'ja','じゅ':'ju','じょ':'jo',
-
-  // T
-  'た':'ta','ち':'ti','つ':'tsu','て':'te','と':'to',
-  'ちゃ':'cha','ちゅ':'chu','ちょ':'cho',
-
-  // D
-  'だ':'da','ぢ':'di','づ':'du','で':'de','ど':'do',
-  'ぢゃ':'ja','ぢゅ':'ju','ぢょ':'jo',
-
-  // N
-  'な':'na','に':'ni','ぬ':'nu','ね':'ne','の':'no',
-  'にゃ':'nya','にゅ':'nyu','にょ':'nyo',
-
-  // H
-  'は':'ha','ひ':'hi','ふ':'hu','へ':'he','ほ':'ho',
-  'ひゃ':'hya','ひゅ':'hyu','ひょ':'hyo',
-
-  // B
-  'ば':'ba','び':'bi','ぶ':'bu','べ':'be','ぼ':'bo',
-  'びゃ':'bya','びゅ':'byu','びょ':'byo',
-
-  // P
-  'ぱ':'pa','ぴ':'pi','ぷ':'pu','ぺ':'pe','ぽ':'po',
-  'ぴゃ':'pya','ぴゅ':'pyu','ぴょ':'pyo',
-
-  // M
-  'ま':'ma','み':'mi','む':'mu','め':'me','も':'mo',
-  'みゃ':'mya','みゅ':'myu','みょ':'myo',
-
-  // Y
-  'や':'ya','ゆ':'yu','よ':'yo',
-
-  // R
-  'ら':'ra','り':'ri','る':'ru','れ':'re','ろ':'ro',
-  'りゃ':'rya','りゅ':'ryu','りょ':'ryo',
-
-  // W
-  'わ':'wa','を':'wo',
-
-  // N
-  'ん':'n',
-
+    const hiraganaSimple = {
+      'あ':'a','い':'i','う':'u','え':'e','お':'o',
+      'か':'ka','き':'ki','く':'ku','け':'ke','こ':'ko',
+      'が':'ga','ぎ':'gi','ぐ':'gu','げ':'ge','ご':'go',
+      'さ':'sa','し':'shi','す':'su','せ':'se','そ':'so',
+      'ざ':'za','じ':'ji','ず':'zu','ぜ':'ze','ぞ':'zo',
+      'た':'ta','ち':'chi','つ':'tsu','て':'te','と':'to',
+      'だ':'da','で':'de','ど':'do',
+      'な':'na','に':'ni','ぬ':'nu','ね':'ne','の':'no',
+      'は':'ha','ひ':'hi','ふ':'fu','へ':'he','ほ':'ho',
+      'ば':'ba','び':'bi','ぶ':'bu','べ':'be','ぼ':'bo',
+      'ぱ':'pa','ぴ':'pi','ぷ':'pu','ぺ':'pe','ぽ':'po',
+      'ま':'ma','み':'mi','む':'mu','め':'me','も':'mo',
+      'や':'ya','ゆ':'yu','よ':'yo',
+      'ら':'ra','り':'ri','る':'ru','れ':'re','ろ':'ro',
+      'わ':'wa','を':'wo','ん':'n'
     };
 
-    const soundCorrect = new Audio('audio/correct.mp3');
-    const soundWrong = new Audio('audio/wrong.mp3');
+    const hiraganaComplex = {
+      'きゃ':'kya','きゅ':'kyu','きょ':'kyo',
+      'ぎゃ':'gya','ぎゅ':'gyu','ぎょ':'gyo',
+      'しゃ':'sha','しゅ':'shu','しょ':'sho',
+      'じゃ':'ja','じゅ':'ju','じょ':'jo',
+      'ちゃ':'cha','ちゅ':'chu','ちょ':'cho',
+      'にゃ':'nya','にゅ':'nyu','にょ':'nyo',
+      'ひゃ':'hya','ひゅ':'hyu','ひょ':'hyo',
+      'びゃ':'bya','びゅ':'byu','びょ':'byo',
+      'ぴゃ':'pya','ぴゅ':'pyu','ぴょ':'pyo',
+      'みゃ':'mya','みゅ':'myu','みょ':'myo',
+      'りゃ':'rya','りゅ':'ryu','りょ':'ryo'
+    };
 
+    const katakana = {
+      'ア':'a','イ':'i','ウ':'u','エ':'e','オ':'o',
+      'カ':'ka','キ':'ki','ク':'ku','ケ':'ke','コ':'ko',
+      'ガ':'ga','ギ':'gi','グ':'gu','ゲ':'ge','ゴ':'go',
+      'サ':'sa','シ':'shi','ス':'su','セ':'se','ソ':'so',
+      'ザ':'za','ジ':'ji','ズ':'zu','ゼ':'ze','ゾ':'zo',
+      'タ':'ta','チ':'chi','ツ':'tsu','テ':'te','ト':'to',
+      'ダ':'da','デ':'de','ド':'do',
+      'ナ':'na','ニ':'ni','ヌ':'nu','ネ':'ne','ノ':'no',
+      'ハ':'ha','ヒ':'hi','フ':'fu','ヘ':'he','ホ':'ho',
+      'バ':'ba','ビ':'bi','ブ':'bu','ベ':'be','ボ':'bo',
+      'パ':'pa','ピ':'pi','プ':'pu','ペ':'pe','ポ':'po',
+      'マ':'ma','ミ':'mi','ム':'mu','メ':'me','モ':'mo',
+      'ヤ':'ya','ユ':'yu','ヨ':'yo',
+      'ラ':'ra','リ':'ri','ル':'ru','レ':'re','ロ':'ro',
+      'ワ':'wa','ヲ':'wo','ン':'n'
+    };
 
-    const allHiraganaKeys = Object.keys(hiraganaMap);
-    // simple = single-character keys (no combinations like きゃ, ぎゅ, etc.)
-    const simpleHiraganaKeys = allHiraganaKeys.filter(k => k.length === 1);
+    let pool = {}; 
     let currentChar = '';
     let correct = 0;
     let wrong = 0;
 
-    function getActiveKeys() {
-      const simpleOnly = document.getElementById('simpleOnly');
-      return (simpleOnly && simpleOnly.checked) ? simpleHiraganaKeys : allHiraganaKeys;
+    function updatePool() {
+      pool = {};
+      if(document.getElementById('simpleH').checked) Object.assign(pool, hiraganaSimple);
+      if(document.getElementById('complexH').checked) Object.assign(pool, hiraganaComplex);
+      if(document.getElementById('katakana').checked) Object.assign(pool, katakana);
     }
 
-    function randomHiragana() {
-      const keys = getActiveKeys();
-      const idx = Math.floor(Math.random() * keys.length);
-      currentChar = keys[idx];
+    function randomChar() {
+      updatePool();
+      const keys = Object.keys(pool);
+      if(keys.length === 0) return;
+      currentChar = keys[Math.floor(Math.random() * keys.length)];
       document.getElementById('hiragana').innerText = currentChar;
       document.getElementById('answer').value = '';
       document.getElementById('feedback').innerText = '';
     }
 
-    // If the user toggles the switch, immediately pick a new character
-    const simpleCheckbox = document.getElementById('simpleOnly');
-    if (simpleCheckbox) {
-      simpleCheckbox.addEventListener('change', function() {
-        randomHiragana();
-      });
-    }
-
     function checkAnswer() {
-      const userAnswer = document.getElementById('answer').value.toLowerCase().trim();
-      if(!userAnswer) {
-        document.getElementById('feedback').innerText = '⚠️ Por favor, escribe algo';
+      const ans = document.getElementById('answer').value.trim().toLowerCase();
+      if(!ans) {
+        document.getElementById('feedback').innerText = '⚠️ Escribe algo';
         return;
       }
-      if(userAnswer === hiraganaMap[currentChar]) {
+      if(ans === pool[currentChar]) {
         document.getElementById('feedback').innerText = '✅ Correcto!';
         correct++;
-        try { soundCorrect.play(); } catch(e) { console.log('Audio no disponible'); }
       } else {
-        document.getElementById('feedback').innerText = `❌ Incorrecto. Es "${hiraganaMap[currentChar]}"`;
+        document.getElementById('feedback').innerText = `❌ Incorrecto. Era "${pool[currentChar]}"`;
         wrong++;
-        try { soundWrong.play(); } catch(e) { console.log('Audio no disponible'); }
       }
       updateStats();
-      setTimeout(randomHiragana, 1000);
+      setTimeout(randomChar, 800);
     }
-    // Detecta la tecla Enter en el input
-    document.getElementById('answer').addEventListener('keydown', function(event) {
-    if(event.key === 'Enter') {   // Si se pulsa Enter
-      checkAnswer();
-    }
-});
+
+    document.getElementById('answer').addEventListener('keydown', e => {
+      if(e.key === 'Enter') checkAnswer();
+    });
 
     function updateStats() {
       document.getElementById('stats').innerText = `Aciertos: ${correct} | Errores: ${wrong}`;
@@ -173,20 +145,17 @@
       correct = 0;
       wrong = 0;
       updateStats();
-      randomHiragana();
+      randomChar();
     }
 
-    // Ajuste para altura real del viewport en móviles: define --vh
     function setVh() {
       document.documentElement.style.setProperty('--vh', (window.innerHeight * 0.01) + 'px');
     }
+
     setVh();
     window.addEventListener('resize', setVh);
 
-    // Inicializa el quiz
-    randomHiragana();
+    randomChar();
   </script>
 </body>
 </html>
-
-
