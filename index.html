@@ -1,52 +1,83 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Hiragana & Katakana Quiz</title>
-  <style>
-    html, body { height: 100%; margin: 0; }
-    body {
-      font-family: Arial;
-      text-align: center;
-      background-color: #f5f5f5;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      box-sizing: border-box;
-      min-height: 100vh;
-      min-height: calc(var(--vh, 1vh) * 100);
-      flex-direction: column;
-    }
-    input { font-size: 18px; padding: 8px; border: 2px solid #ccc; border-radius: 5px; width: 90%; max-width: 300px; }
-    button { font-size: 18px; padding: 8px 15px; margin: 5px; border: none; border-radius: 5px; background-color: #4792d9; color: white; cursor: pointer; }
-    button:hover { background-color: #3b7fb8; }
-    #feedback { margin-top: 20px; font-weight: bold; font-size: 20px; height: 30px; }
-    #stats { margin-top: 20px; font-size: 18px; color: #333; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hiragana & Katakana Quiz</title>
+
+<style>
+body {
+  font-family: Arial;
+  text-align: center;
+  background-color: #f5f5f5;
+  padding: 20px;
+}
+input {
+  font-size: 18px;
+  padding: 8px;
+  width: 90%;
+  max-width: 300px;
+}
+button {
+  font-size: 18px;
+  padding: 8px 15px;
+  margin: 5px;
+  background: #4792d9;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+#feedback { font-size: 20px; height: 30px; margin-top: 10px; }
+#stats { margin-top: 10px; font-size: 18px; }
+
+#progressContainer {
+  width: 90%;
+  max-width: 300px;
+  height: 15px;
+  background: #ddd;
+  border-radius: 10px;
+  margin: 15px auto;
+  display: none;
+}
+#progressBar {
+  height: 100%;
+  width: 0%;
+  background: #4caf50;
+  border-radius: 10px;
+}
+</style>
 </head>
+
 <body>
-  <h1>Hiragana & Katakana Quiz</h1>
-  
-  <p id="hiragana" style="font-size: 60px;"></p>
-  <p id="feedback"></p>
-  
-  <input type="text" id="answer" placeholder="Escribe romaji">
 
-  <div style="margin-top:15px; font-size:14px;">
-    <label><input type="checkbox" id="simpleH" checked> Hiragana simples</label><br>
-    <label><input type="checkbox" id="complexH"> Hiragana complejos</label><br>
-    <label><input type="checkbox" id="katakana"> Katakana</label>
-  </div>
+<h1>Hiragana & Katakana Quiz</h1>
 
-  <button onclick="checkAnswer()">Enviar</button>
-  <button onclick="resetQuiz()">Empezar de nuevo</button>
+<p id="hiragana" style="font-size:60px;"></p>
 
-  <p id="stats">Aciertos: 0 | Errores: 0</p>
+<div id="progressContainer">
+  <div id="progressBar"></div>
+</div>
 
-  <script>
-    const hiraganaSimple = {
+<p id="feedback"></p>
+<input type="text" id="answer" placeholder="Escribe romaji">
+
+<div style="margin-top:10px">
+  <label><input type="checkbox" id="simpleH" checked> Hiragana simples</label><br>
+  <label><input type="checkbox" id="complexH"> Hiragana complejos</label><br>
+  <label><input type="checkbox" id="katakanaChk"> Katakana</label>
+</div>
+
+<button onclick="checkAnswer()">Enviar</button>
+<button onclick="resetQuiz()">Empezar de nuevo</button>
+<button onclick="startTest()">Modo test</button>
+
+<p id="stats">Aciertos: 0 | Errores: 0</p>
+
+<script>
+// ------------------ DATOS ------------------
+
+const hiraganaSimple = {
       'あ':'a','い':'i','う':'u','え':'e','お':'o',
       'か':'ka','き':'ki','く':'ku','け':'ke','こ':'ko',
       'が':'ga','ぎ':'gi','ぐ':'gu','げ':'ge','ご':'go',
@@ -78,7 +109,7 @@
       'りゃ':'rya','りゅ':'ryu','りょ':'ryo'
     };
 
-    const katakana = {
+    const katakanaChars = {
       'ア':'a','イ':'i','ウ':'u','エ':'e','オ':'o',
       'カ':'ka','キ':'ki','ク':'ku','ケ':'ke','コ':'ko',
       'ガ':'ga','ギ':'gi','グ':'gu','ゲ':'ge','ゴ':'go',
@@ -96,69 +127,147 @@
       'ワ':'wa','ヲ':'wo','ン':'n'
     };
 
-    let pool = {}; 
-    let currentChar = '';
-    let correct = 0;
-    let wrong = 0;
+// ------------------ ESTADO ------------------
 
-    function updatePool() {
-      pool = {};
-      if(document.getElementById('simpleH').checked) Object.assign(pool, hiraganaSimple);
-      if(document.getElementById('complexH').checked) Object.assign(pool, hiraganaComplex);
-      if(document.getElementById('katakana').checked) Object.assign(pool, katakana);
+let pool = {};
+let currentChar = '';
+let correct = 0;
+let wrong = 0;
+
+let testMode = false;
+let testList = [];
+let testIndex = 0;
+let failedChars = [];
+
+// ------------------ FUNCIONES ------------------
+
+function updatePool() {
+  pool = {};
+  if (simpleH.checked) Object.assign(pool, hiraganaSimple);
+  if (complexH.checked) Object.assign(pool, hiraganaComplex);
+  if (katakanaChk.checked) Object.assign(pool, katakanaChars);
+}
+
+function shuffle(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+}
+
+function showChar() {
+  hiragana.innerText = currentChar;
+  answer.value = '';
+  feedback.innerText = '';
+  updateProgress();
+}
+
+function randomChar() {
+  if (testMode) return;
+  updatePool();
+  const keys = Object.keys(pool);
+  if (!keys.length) return;
+  currentChar = keys[Math.floor(Math.random() * keys.length)];
+  showChar();
+}
+
+function startTest() {
+  updatePool();
+  testList = Object.keys(pool);
+  if (!testList.length) {
+    alert("Selecciona al menos una opción");
+    return;
+  }
+
+  shuffle(testList);
+  testIndex = 0;
+  correct = 0;
+  wrong = 0;
+  failedChars = [];
+  testMode = true;
+
+  simpleH.disabled = complexH.disabled = katakanaChk.disabled = true;
+  progressContainer.style.display = "block";
+  progressBar.style.width = "0%";
+
+  currentChar = testList[0];
+  updateStats();
+  showChar();
+}
+
+function checkAnswer() {
+  const ans = answer.value.trim().toLowerCase();
+  if (!ans) return;
+
+  if (ans === pool[currentChar]) {
+    feedback.innerText = "✅ Correcto";
+    correct++;
+  } else {
+    feedback.innerText = `❌ ${pool[currentChar]}`;
+    wrong++;
+    failedChars.push(`${currentChar} → ${pool[currentChar]}`);
+  }
+
+  updateStats();
+
+  if (testMode) {
+    testIndex++;
+    if (testIndex >= testList.length) {
+      finishTest();
+    } else {
+      currentChar = testList[testIndex];
+      setTimeout(showChar, 600);
     }
+  } else {
+    setTimeout(randomChar, 600);
+  }
+}
 
-    function randomChar() {
-      updatePool();
-      const keys = Object.keys(pool);
-      if(keys.length === 0) return;
-      currentChar = keys[Math.floor(Math.random() * keys.length)];
-      document.getElementById('hiragana').innerText = currentChar;
-      document.getElementById('answer').value = '';
-      document.getElementById('feedback').innerText = '';
-    }
+function updateProgress() {
+  if (!testMode) return;
+  progressBar.style.width =
+    ((testIndex + 1) / testList.length) * 100 + "%";
+}
 
-    function checkAnswer() {
-      const ans = document.getElementById('answer').value.trim().toLowerCase();
-      if(!ans) {
-        document.getElementById('feedback').innerText = '⚠️ Escribe algo';
-        return;
-      }
-      if(ans === pool[currentChar]) {
-        document.getElementById('feedback').innerText = '✅ Correcto!';
-        correct++;
-      } else {
-        document.getElementById('feedback').innerText = `❌ Incorrecto. Era "${pool[currentChar]}"`;
-        wrong++;
-      }
-      updateStats();
-      setTimeout(randomChar, 800);
-    }
+function finishTest() {
+  const nota = ((correct / testList.length) * 10).toFixed(2);
 
-    document.getElementById('answer').addEventListener('keydown', e => {
-      if(e.key === 'Enter') checkAnswer();
-    });
+  let mensaje = `Nota final: ${nota}/10\n\n`;
+  if (failedChars.length) {
+    mensaje += "Fallos:\n" + failedChars.join("\n");
+  } else {
+    mensaje += "¡Perfecto! Sin fallos 🎉";
+  }
 
-    function updateStats() {
-      document.getElementById('stats').innerText = `Aciertos: ${correct} | Errores: ${wrong}`;
-    }
+  alert(mensaje);
 
-    function resetQuiz() {
-      correct = 0;
-      wrong = 0;
-      updateStats();
-      randomChar();
-    }
+  testMode = false;
+  progressContainer.style.display = "none";
+  simpleH.disabled = complexH.disabled = katakanaChk.disabled = false;
+  randomChar();
+}
 
-    function setVh() {
-      document.documentElement.style.setProperty('--vh', (window.innerHeight * 0.01) + 'px');
-    }
+function updateStats() {
+  stats.innerText = `Aciertos: ${correct} | Errores: ${wrong}`;
+}
 
-    setVh();
-    window.addEventListener('resize', setVh);
+function resetQuiz() {
+  testMode = false;
+  correct = 0;
+  wrong = 0;
+  progressContainer.style.display = "none";
+  simpleH.disabled = complexH.disabled = katakanaChk.disabled = false;
+  updateStats();
+  randomChar();
+}
 
-    randomChar();
-  </script>
+answer.addEventListener("keydown", e => {
+  if (e.key === "Enter") checkAnswer();
+});
+
+// Inicio
+randomChar();
+</script>
+
 </body>
 </html>
-
