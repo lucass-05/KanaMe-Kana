@@ -1,0 +1,1261 @@
+[
+    {
+        "kanji": "一",
+        "escritura": "一",
+        "pronunciaciones": [
+            "ichi",
+            "hito(tsu)"
+        ],
+        "traduccionES": "uno",
+        "traduccionEn": "one"
+    },
+    {
+        "kanji": "二",
+        "escritura": "二",
+        "pronunciaciones": [
+            "ni",
+            "futa(tsu)"
+        ],
+        "traduccionES": "dos",
+        "traduccionEn": "two"
+    },
+    {
+        "kanji": "三",
+        "escritura": "三",
+        "pronunciaciones": [
+            "san",
+            "mi(tsu)"
+        ],
+        "traduccionES": "tres",
+        "traduccionEn": "three"
+    },
+    {
+        "kanji": "四",
+        "escritura": "四",
+        "pronunciaciones": [
+            "shi",
+            "yon",
+            "yo(tsu)"
+        ],
+        "traduccionES": "cuatro",
+        "traduccionEn": "four"
+    },
+    {
+        "kanji": "五",
+        "escritura": "五",
+        "pronunciaciones": [
+            "go",
+            "itsu(tsu)"
+        ],
+        "traduccionES": "cinco",
+        "traduccionEn": "five"
+    },
+    {
+        "kanji": "六",
+        "escritura": "六",
+        "pronunciaciones": [
+            "roku",
+            "mu(tsu)"
+        ],
+        "traduccionES": "seis",
+        "traduccionEn": "six"
+    },
+    {
+        "kanji": "七",
+        "escritura": "七",
+        "pronunciaciones": [
+            "shichi",
+            "nana(tsu)"
+        ],
+        "traduccionES": "siete",
+        "traduccionEn": "seven"
+    },
+    {
+        "kanji": "八",
+        "escritura": "八",
+        "pronunciaciones": [
+            "hachi",
+            "ya(tsu)"
+        ],
+        "traduccionES": "ocho",
+        "traduccionEn": "eight"
+    },
+    {
+        "kanji": "九",
+        "escritura": "九",
+        "pronunciaciones": [
+            "kyuu",
+            "ku",
+            "kokono(tsu)"
+        ],
+        "traduccionES": "nueve",
+        "traduccionEn": "nine"
+    },
+    {
+        "kanji": "十",
+        "escritura": "十",
+        "pronunciaciones": [
+            "juu",
+            "too"
+        ],
+        "traduccionES": "diez",
+        "traduccionEn": "ten"
+    },
+    {
+        "kanji": "百",
+        "escritura": "百",
+        "pronunciaciones": [
+            "hyaku"
+        ],
+        "traduccionES": "cien",
+        "traduccionEn": "hundred"
+    },
+    {
+        "kanji": "千",
+        "escritura": "千",
+        "pronunciaciones": [
+            "sen"
+        ],
+        "traduccionES": "mil",
+        "traduccionEn": "thousand"
+    },
+    {
+        "kanji": "万",
+        "escritura": "万",
+        "pronunciaciones": [
+            "man"
+        ],
+        "traduccionES": "diez mil",
+        "traduccionEn": "ten thousand"
+    },
+    {
+        "kanji": "日",
+        "escritura": "日",
+        "pronunciaciones": [
+            "nichi",
+            "jitsu",
+            "hi",
+            "bi",
+            "ka"
+        ],
+        "traduccionES": "día / sol",
+        "traduccionEn": "day / sun"
+    },
+    {
+        "kanji": "月",
+        "escritura": "月",
+        "pronunciaciones": [
+            "getsu",
+            "gatsu",
+            "tsuki"
+        ],
+        "traduccionES": "mes / luna",
+        "traduccionEn": "month / moon"
+    },
+    {
+        "kanji": "火",
+        "escritura": "火",
+        "pronunciaciones": [
+            "ka",
+            "hi"
+        ],
+        "traduccionES": "fuego",
+        "traduccionEn": "fire"
+    },
+    {
+        "kanji": "水",
+        "escritura": "水",
+        "pronunciaciones": [
+            "sui",
+            "mizu"
+        ],
+        "traduccionES": "agua",
+        "traduccionEn": "water"
+    },
+    {
+        "kanji": "木",
+        "escritura": "木",
+        "pronunciaciones": [
+            "moku",
+            "boku",
+            "ki"
+        ],
+        "traduccionES": "árbol / madera",
+        "traduccionEn": "tree / wood"
+    },
+    {
+        "kanji": "金",
+        "escritura": "金",
+        "pronunciaciones": [
+            "kin",
+            "kon",
+            "kane"
+        ],
+        "traduccionES": "oro / dinero",
+        "traduccionEn": "gold / money"
+    },
+    {
+        "kanji": "土",
+        "escritura": "土",
+        "pronunciaciones": [
+            "do",
+            "tsuchi"
+        ],
+        "traduccionES": "tierra",
+        "traduccionEn": "earth / soil"
+    },
+    {
+        "kanji": "山",
+        "escritura": "山",
+        "pronunciaciones": [
+            "san",
+            "yama"
+        ],
+        "traduccionES": "montaña",
+        "traduccionEn": "mountain"
+    },
+    {
+        "kanji": "川",
+        "escritura": "川",
+        "pronunciaciones": [
+            "sen",
+            "kawa"
+        ],
+        "traduccionES": "río",
+        "traduccionEn": "river"
+    },
+    {
+        "kanji": "田",
+        "escritura": "田",
+        "pronunciaciones": [
+            "den",
+            "ta"
+        ],
+        "traduccionES": "campo de arroz",
+        "traduccionEn": "rice field"
+    },
+    {
+        "kanji": "人",
+        "escritura": "人",
+        "pronunciaciones": [
+            "jin",
+            "nin",
+            "hito"
+        ],
+        "traduccionES": "persona",
+        "traduccionEn": "person"
+    },
+    {
+        "kanji": "口",
+        "escritura": "口",
+        "pronunciaciones": [
+            "kou",
+            "kuchi"
+        ],
+        "traduccionES": "boca",
+        "traduccionEn": "mouth"
+    },
+    {
+        "kanji": "目",
+        "escritura": "目",
+        "pronunciaciones": [
+            "moku",
+            "me"
+        ],
+        "traduccionES": "ojo",
+        "traduccionEn": "eye"
+    },
+    {
+        "kanji": "耳",
+        "escritura": "耳",
+        "pronunciaciones": [
+            "ji",
+            "mimi"
+        ],
+        "traduccionES": "oreja",
+        "traduccionEn": "ear"
+    },
+    {
+        "kanji": "手",
+        "escritura": "手",
+        "pronunciaciones": [
+            "shu",
+            "te"
+        ],
+        "traduccionES": "mano",
+        "traduccionEn": "hand"
+    },
+    {
+        "kanji": "足",
+        "escritura": "足",
+        "pronunciaciones": [
+            "soku",
+            "ashi"
+        ],
+        "traduccionES": "pie / pierna",
+        "traduccionEn": "foot / leg"
+    },
+    {
+        "kanji": "車",
+        "escritura": "車",
+        "pronunciaciones": [
+            "sha",
+            "kuruma"
+        ],
+        "traduccionES": "coche",
+        "traduccionEn": "car"
+    },
+    {
+        "kanji": "門",
+        "escritura": "門",
+        "pronunciaciones": [
+            "mon",
+            "kado"
+        ],
+        "traduccionES": "puerta / portón",
+        "traduccionEn": "gate"
+    },
+    {
+        "kanji": "校",
+        "escritura": "校",
+        "pronunciaciones": [
+            "kou"
+        ],
+        "traduccionES": "escuela (sufijo)",
+        "traduccionEn": "school (suffix)"
+    },
+    {
+        "kanji": "学",
+        "escritura": "学",
+        "pronunciaciones": [
+            "gaku",
+            "mana(bu)"
+        ],
+        "traduccionES": "estudio / aprender",
+        "traduccionEn": "study / learn"
+    },
+    {
+        "kanji": "生",
+        "escritura": "生",
+        "pronunciaciones": [
+            "sei",
+            "shou",
+            "i(kiru)",
+            "u(mu)"
+        ],
+        "traduccionES": "vida / nacer / estudiante",
+        "traduccionEn": "life / birth / student"
+    },
+    {
+        "kanji": "先",
+        "escritura": "先",
+        "pronunciaciones": [
+            "sen",
+            "saki"
+        ],
+        "traduccionES": "antes / adelante",
+        "traduccionEn": "ahead / before"
+    },
+    {
+        "kanji": "私",
+        "escritura": "私",
+        "pronunciaciones": [
+            "shi",
+            "watashi"
+        ],
+        "traduccionES": "yo (formal)",
+        "traduccionEn": "I / me"
+    },
+    {
+        "kanji": "何",
+        "escritura": "何",
+        "pronunciaciones": [
+            "ka",
+            "nani",
+            "nan"
+        ],
+        "traduccionES": "qué",
+        "traduccionEn": "what"
+    },
+    {
+        "kanji": "立",
+        "escritura": "立",
+        "pronunciaciones": [
+            "ritsu",
+            "tatsu"
+        ],
+        "traduccionES": "estar de pie",
+        "traduccionEn": "stand"
+    },
+    {
+        "kanji": "休",
+        "escritura": "休",
+        "pronunciaciones": [
+            "kyuu",
+            "yasu(mu)"
+        ],
+        "traduccionES": "descansar",
+        "traduccionEn": "rest"
+    },
+    {
+        "kanji": "見",
+        "escritura": "見",
+        "pronunciaciones": [
+            "ken",
+            "mi(ru)"
+        ],
+        "traduccionES": "ver",
+        "traduccionEn": "see / look"
+    },
+    {
+        "kanji": "聞",
+        "escritura": "聞",
+        "pronunciaciones": [
+            "bun",
+            "ki",
+            "ki(ku)"
+        ],
+        "traduccionES": "escuchar / preguntar",
+        "traduccionEn": "hear / ask"
+    },
+    {
+        "kanji": "言",
+        "escritura": "言",
+        "pronunciaciones": [
+            "gen",
+            "gon",
+            "i(u)"
+        ],
+        "traduccionES": "decir / palabra",
+        "traduccionEn": "say / word"
+    },
+    {
+        "kanji": "話",
+        "escritura": "話",
+        "pronunciaciones": [
+            "wa",
+            "hana(su)"
+        ],
+        "traduccionES": "hablar / historia",
+        "traduccionEn": "talk / story"
+    },
+    {
+        "kanji": "書",
+        "escritura": "書",
+        "pronunciaciones": [
+            "sho",
+            "ka(ku)"
+        ],
+        "traduccionES": "escribir",
+        "traduccionEn": "write"
+    },
+    {
+        "kanji": "読",
+        "escritura": "読",
+        "pronunciaciones": [
+            "doku",
+            "yo(mu)"
+        ],
+        "traduccionES": "leer",
+        "traduccionEn": "read"
+    },
+    {
+        "kanji": "食",
+        "escritura": "食",
+        "pronunciaciones": [
+            "shoku",
+            "ta(beru)"
+        ],
+        "traduccionES": "comer",
+        "traduccionEn": "eat"
+    },
+    {
+        "kanji": "飲",
+        "escritura": "飲",
+        "pronunciaciones": [
+            "in",
+            "no(mu)"
+        ],
+        "traduccionES": "beber",
+        "traduccionEn": "drink"
+    },
+    {
+        "kanji": "行",
+        "escritura": "行",
+        "pronunciaciones": [
+            "kou",
+            "gyou",
+            "i(ku)"
+        ],
+        "traduccionES": "ir",
+        "traduccionEn": "go"
+    },
+    {
+        "kanji": "来",
+        "escritura": "来",
+        "pronunciaciones": [
+            "rai",
+            "ku(ru)"
+        ],
+        "traduccionES": "venir",
+        "traduccionEn": "come"
+    },
+    {
+        "kanji": "帰",
+        "escritura": "帰",
+        "pronunciaciones": [
+            "ki",
+            "kaeru"
+        ],
+        "traduccionES": "volver",
+        "traduccionEn": "return"
+    },
+    {
+        "kanji": "入",
+        "escritura": "入",
+        "pronunciaciones": [
+            "nyuu",
+            "hai(ru)"
+        ],
+        "traduccionES": "entrar",
+        "traduccionEn": "enter"
+    },
+    {
+        "kanji": "出",
+        "escritura": "出",
+        "pronunciaciones": [
+            "shutsu",
+            "de(ru)"
+        ],
+        "traduccionES": "salir",
+        "traduccionEn": "exit"
+    },
+    {
+        "kanji": "上",
+        "escritura": "上",
+        "pronunciaciones": [
+            "jou",
+            "ue"
+        ],
+        "traduccionES": "arriba",
+        "traduccionEn": "up"
+    },
+    {
+        "kanji": "下",
+        "escritura": "下",
+        "pronunciaciones": [
+            "ka",
+            "shita"
+        ],
+        "traduccionES": "abajo",
+        "traduccionEn": "down"
+    },
+    {
+        "kanji": "左",
+        "escritura": "左",
+        "pronunciaciones": [
+            "sa",
+            "hidari"
+        ],
+        "traduccionES": "izquierda",
+        "traduccionEn": "left"
+    },
+    {
+        "kanji": "右",
+        "escritura": "右",
+        "pronunciaciones": [
+            "u",
+            "migi"
+        ],
+        "traduccionES": "derecha",
+        "traduccionEn": "right"
+    },
+    {
+        "kanji": "中",
+        "escritura": "中",
+        "pronunciaciones": [
+            "chuu",
+            "naka"
+        ],
+        "traduccionES": "medio / dentro",
+        "traduccionEn": "inside / middle"
+    },
+    {
+        "kanji": "外",
+        "escritura": "外",
+        "pronunciaciones": [
+            "gai",
+            "soto"
+        ],
+        "traduccionES": "fuera",
+        "traduccionEn": "outside"
+    },
+    {
+        "kanji": "前",
+        "escritura": "前",
+        "pronunciaciones": [
+            "zen",
+            "mae"
+        ],
+        "traduccionES": "antes / delante",
+        "traduccionEn": "front / before"
+    },
+    {
+        "kanji": "後",
+        "escritura": "後",
+        "pronunciaciones": [
+            "go",
+            "ato",
+            "ushiro"
+        ],
+        "traduccionES": "después / detrás",
+        "traduccionEn": "after / behind"
+    },
+    {
+        "kanji": "大",
+        "escritura": "大",
+        "pronunciaciones": [
+            "dai",
+            "oo(kii)"
+        ],
+        "traduccionES": "grande",
+        "traduccionEn": "big"
+    },
+    {
+        "kanji": "小",
+        "escritura": "小",
+        "pronunciaciones": [
+            "shou",
+            "chii(sai)"
+        ],
+        "traduccionES": "pequeño",
+        "traduccionEn": "small"
+    },
+    {
+        "kanji": "高",
+        "escritura": "高",
+        "pronunciaciones": [
+            "kou",
+            "taka(i)"
+        ],
+        "traduccionES": "alto / caro",
+        "traduccionEn": "high / expensive"
+    },
+    {
+        "kanji": "安",
+        "escritura": "安",
+        "pronunciaciones": [
+            "an",
+            "yasu(i)"
+        ],
+        "traduccionES": "barato / seguro",
+        "traduccionEn": "cheap / safe"
+    },
+    {
+        "kanji": "新",
+        "escritura": "新",
+        "pronunciaciones": [
+            "shin",
+            "atara(shii)"
+        ],
+        "traduccionES": "nuevo",
+        "traduccionEn": "new"
+    },
+    {
+        "kanji": "古",
+        "escritura": "古",
+        "pronunciaciones": [
+            "ko",
+            "furu(i)"
+        ],
+        "traduccionES": "viejo",
+        "traduccionEn": "old"
+    },
+    {
+        "kanji": "長",
+        "escritura": "長",
+        "pronunciaciones": [
+            "chou",
+            "naga(i)"
+        ],
+        "traduccionES": "largo / jefe",
+        "traduccionEn": "long / chief"
+    },
+    {
+        "kanji": "早",
+        "escritura": "早",
+        "pronunciaciones": [
+            "sou",
+            "haya(i)"
+        ],
+        "traduccionES": "temprano",
+        "traduccionEn": "early"
+    },
+    {
+        "kanji": "多",
+        "escritura": "多",
+        "pronunciaciones": [
+            "ta",
+            "oo(i)"
+        ],
+        "traduccionES": "mucho",
+        "traduccionEn": "many"
+    },
+    {
+        "kanji": "少",
+        "escritura": "少",
+        "pronunciaciones": [
+            "shou",
+            "suku(nai)"
+        ],
+        "traduccionES": "poco",
+        "traduccionEn": "few"
+    },
+    {
+        "kanji": "白",
+        "escritura": "白",
+        "pronunciaciones": [
+            "haku",
+            "shiro(i)"
+        ],
+        "traduccionES": "blanco",
+        "traduccionEn": "white"
+    },
+    {
+        "kanji": "黒",
+        "escritura": "黒",
+        "pronunciaciones": [
+            "koku",
+            "kuro(i)"
+        ],
+        "traduccionES": "negro",
+        "traduccionEn": "black"
+    },
+    {
+        "kanji": "赤",
+        "escritura": "赤",
+        "pronunciaciones": [
+            "seki",
+            "aka(i)"
+        ],
+        "traduccionES": "rojo",
+        "traduccionEn": "red"
+    },
+    {
+        "kanji": "青",
+        "escritura": "青",
+        "pronunciaciones": [
+            "sei",
+            "ao(i)"
+        ],
+        "traduccionES": "azul",
+        "traduccionEn": "blue"
+    },
+    {
+        "kanji": "魚",
+        "escritura": "魚",
+        "pronunciaciones": [
+            "gyo",
+            "sakana"
+        ],
+        "traduccionES": "pez",
+        "traduccionEn": "fish"
+    },
+    {
+        "kanji": "犬",
+        "escritura": "犬",
+        "pronunciaciones": [
+            "ken",
+            "inu"
+        ],
+        "traduccionES": "perro",
+        "traduccionEn": "dog"
+    },
+    {
+        "kanji": "猫",
+        "escritura": "猫",
+        "pronunciaciones": [
+            "byou",
+            "neko"
+        ],
+        "traduccionES": "gato",
+        "traduccionEn": "cat"
+    },
+    {
+        "kanji": "雨",
+        "escritura": "雨",
+        "pronunciaciones": [
+            "u",
+            "ame"
+        ],
+        "traduccionES": "lluvia",
+        "traduccionEn": "rain"
+    },
+    {
+        "kanji": "天",
+        "escritura": "天",
+        "pronunciaciones": [
+            "ten"
+        ],
+        "traduccionES": "cielo",
+        "traduccionEn": "sky / heaven"
+    },
+    {
+        "kanji": "気",
+        "escritura": "気",
+        "pronunciaciones": [
+            "ki",
+            "ke"
+        ],
+        "traduccionES": "energía / ánimo",
+        "traduccionEn": "spirit / energy"
+    },
+    {
+        "kanji": "時",
+        "escritura": "時",
+        "pronunciaciones": [
+            "ji",
+            "toki"
+        ],
+        "traduccionES": "tiempo / hora",
+        "traduccionEn": "time / hour"
+    },
+    {
+        "kanji": "分",
+        "escritura": "分",
+        "pronunciaciones": [
+            "bun",
+            "fun",
+            "wakeru"
+        ],
+        "traduccionES": "minuto / parte",
+        "traduccionEn": "minute / part"
+    },
+    {
+        "kanji": "年",
+        "escritura": "年",
+        "pronunciaciones": [
+            "nen",
+            "toshi"
+        ],
+        "traduccionES": "año",
+        "traduccionEn": "year"
+    },
+    {
+        "kanji": "今",
+        "escritura": "今",
+        "pronunciaciones": [
+            "kon",
+            "ima"
+        ],
+        "traduccionES": "ahora",
+        "traduccionEn": "now"
+    },
+    {
+        "kanji": "毎",
+        "escritura": "毎",
+        "pronunciaciones": [
+            "mai"
+        ],
+        "traduccionES": "cada",
+        "traduccionEn": "every"
+    },
+    {
+        "kanji": "週",
+        "escritura": "週",
+        "pronunciaciones": [
+            "shuu"
+        ],
+        "traduccionES": "semana",
+        "traduccionEn": "week"
+    },
+    {
+        "kanji": "半",
+        "escritura": "半",
+        "pronunciaciones": [
+            "han"
+        ],
+        "traduccionES": "medio",
+        "traduccionEn": "half"
+    },
+    {
+        "kanji": "間",
+        "escritura": "間",
+        "pronunciaciones": [
+            "kan",
+            "aida"
+        ],
+        "traduccionES": "intervalo / entre",
+        "traduccionEn": "interval / between"
+    },
+    {
+        "kanji": "駅",
+        "escritura": "駅",
+        "pronunciaciones": [
+            "eki"
+        ],
+        "traduccionES": "estación",
+        "traduccionEn": "station"
+    },
+    {
+        "kanji": "電",
+        "escritura": "電",
+        "pronunciaciones": [
+            "den"
+        ],
+        "traduccionES": "electricidad",
+        "traduccionEn": "electricity"
+    },
+    {
+        "kanji": "試",
+        "escritura": "試",
+        "pronunciaciones": [
+            "shi",
+            "tamesu"
+        ],
+        "traduccionES": "probar / examen",
+        "traduccionEn": "test / try"
+    },
+    {
+        "kanji": "合",
+        "escritura": "合",
+        "pronunciaciones": [
+            "gou",
+            "au"
+        ],
+        "traduccionES": "unir / coincidir",
+        "traduccionEn": "join / fit"
+    },
+    {
+        "kanji": "社",
+        "escritura": "社",
+        "pronunciaciones": [
+            "sha"
+        ],
+        "traduccionES": "empresa / sociedad",
+        "traduccionEn": "company / society"
+    },
+    {
+        "kanji": "友",
+        "escritura": "友",
+        "pronunciaciones": [
+            "yuu",
+            "tomo"
+        ],
+        "traduccionES": "amigo",
+        "traduccionEn": "friend"
+    },
+    {
+        "kanji": "家",
+        "escritura": "家",
+        "pronunciaciones": [
+            "ka",
+            "ie",
+            "uchi"
+        ],
+        "traduccionES": "casa / familia",
+        "traduccionEn": "house / home"
+    },
+    {
+        "kanji": "店",
+        "escritura": "店",
+        "pronunciaciones": [
+            "ten",
+            "mise"
+        ],
+        "traduccionES": "tienda",
+        "traduccionEn": "shop"
+    },
+    {
+        "kanji": "銀",
+        "escritura": "銀",
+        "pronunciaciones": [
+            "gin"
+        ],
+        "traduccionES": "plata / banco (银行)",
+        "traduccionEn": "silver / bank"
+    },
+    {
+        "kanji": "語",
+        "escritura": "語",
+        "pronunciaciones": [
+            "go"
+        ],
+        "traduccionES": "idioma / palabra",
+        "traduccionEn": "language / word"
+    },
+    {
+        "kanji": "名",
+        "escritura": "名",
+        "pronunciaciones": [
+            "mei",
+            "na"
+        ],
+        "traduccionES": "nombre",
+        "traduccionEn": "name"
+    },
+    {
+        "kanji": "本",
+        "escritura": "本",
+        "pronunciaciones": [
+            "hon",
+            "moto"
+        ],
+        "traduccionES": "libro / origen",
+        "traduccionEn": "book / origin"
+    },
+    {
+        "kanji": "空",
+        "escritura": "空",
+        "pronunciaciones": [
+            "kuu",
+            "sora",
+            "kara"
+        ],
+        "traduccionES": "cielo / vacío",
+        "traduccionEn": "sky / empty"
+    },
+    {
+        "kanji": "雨",
+        "escritura": "雨",
+        "pronunciaciones": [
+            "u",
+            "ame"
+        ],
+        "traduccionES": "lluvia",
+        "traduccionEn": "rain"
+    },
+    {
+        "kanji": "電",
+        "escritura": "電",
+        "pronunciaciones": [
+            "den"
+        ],
+        "traduccionES": "electricidad",
+        "traduccionEn": "electricity"
+    },
+    {
+        "kanji": "車",
+        "escritura": "車",
+        "pronunciaciones": [
+            "sha",
+            "kuruma"
+        ],
+        "traduccionES": "coche",
+        "traduccionEn": "car"
+    },
+    {
+        "kanji": "駅",
+        "escritura": "駅",
+        "pronunciaciones": [
+            "eki"
+        ],
+        "traduccionES": "estación de tren",
+        "traduccionEn": "train station"
+    },
+    {
+        "kanji": "店",
+        "escritura": "店",
+        "pronunciaciones": [
+            "ten",
+            "mise"
+        ],
+        "traduccionES": "tienda",
+        "traduccionEn": "shop"
+    },
+    {
+        "kanji": "国",
+        "escritura": "国",
+        "pronunciaciones": [
+            "koku",
+            "kuni"
+        ],
+        "traduccionES": "país",
+        "traduccionEn": "country"
+    },
+    {
+        "kanji": "円",
+        "escritura": "円",
+        "pronunciaciones": [
+            "en"
+        ],
+        "traduccionES": "yen / círculo",
+        "traduccionEn": "yen / circle"
+    },
+    {
+        "kanji": "花",
+        "escritura": "花",
+        "pronunciaciones": [
+            "ka",
+            "hana"
+        ],
+        "traduccionES": "flor",
+        "traduccionEn": "flower"
+    },
+    {
+        "kanji": "雨",
+        "escritura": "雨",
+        "pronunciaciones": [
+            "u",
+            "ame"
+        ],
+        "traduccionES": "lluvia",
+        "traduccionEn": "rain"
+    },
+    {
+        "kanji": "空",
+        "escritura": "空",
+        "pronunciaciones": [
+            "kuu",
+            "sora"
+        ],
+        "traduccionES": "cielo",
+        "traduccionEn": "sky"
+    },
+    {
+        "kanji": "休",
+        "escritura": "休",
+        "pronunciaciones": [
+            "kyuu",
+            "yasu(mu)"
+        ],
+        "traduccionES": "descansar",
+        "traduccionEn": "rest"
+    },
+    {
+        "kanji": "午",
+        "escritura": "午",
+        "pronunciaciones": [
+            "go"
+        ],
+        "traduccionES": "mediodía (parte de 午前/午後)",
+        "traduccionEn": "noon (used in AM/PM)"
+    },
+    {
+        "kanji": "前",
+        "escritura": "前",
+        "pronunciaciones": [
+            "zen",
+            "mae"
+        ],
+        "traduccionES": "delante / antes",
+        "traduccionEn": "front / before"
+    },
+    {
+        "kanji": "後",
+        "escritura": "後",
+        "pronunciaciones": [
+            "go",
+            "ato"
+        ],
+        "traduccionES": "después / detrás",
+        "traduccionEn": "after / behind"
+    },
+    {
+        "kanji": "北",
+        "escritura": "北",
+        "pronunciaciones": [
+            "hoku",
+            "kita"
+        ],
+        "traduccionES": "norte",
+        "traduccionEn": "north"
+    },
+    {
+        "kanji": "南",
+        "escritura": "南",
+        "pronunciaciones": [
+            "nan",
+            "minami"
+        ],
+        "traduccionES": "sur",
+        "traduccionEn": "south"
+    },
+    {
+        "kanji": "東",
+        "escritura": "東",
+        "pronunciaciones": [
+            "tou",
+            "higashi"
+        ],
+        "traduccionES": "este",
+        "traduccionEn": "east"
+    },
+    {
+        "kanji": "西",
+        "escritura": "西",
+        "pronunciaciones": [
+            "sei",
+            "nishi"
+        ],
+        "traduccionES": "oeste",
+        "traduccionEn": "west"
+    },
+    {
+        "kanji": "毎",
+        "escritura": "毎",
+        "pronunciaciones": [
+            "mai"
+        ],
+        "traduccionES": "cada",
+        "traduccionEn": "every"
+    },
+    {
+        "kanji": "体",
+        "escritura": "体",
+        "pronunciaciones": [
+            "tai",
+            "karada"
+        ],
+        "traduccionES": "cuerpo",
+        "traduccionEn": "body"
+    },
+    {
+        "kanji": "校",
+        "escritura": "校",
+        "pronunciaciones": [
+            "kou"
+        ],
+        "traduccionES": "escuela",
+        "traduccionEn": "school"
+    },
+    {
+        "kanji": "語",
+        "escritura": "語",
+        "pronunciaciones": [
+            "go"
+        ],
+        "traduccionES": "idioma / palabra",
+        "traduccionEn": "language / word"
+    },
+    {
+        "kanji": "見",
+        "escritura": "見",
+        "pronunciaciones": [
+            "ken",
+            "mi(ru)"
+        ],
+        "traduccionES": "ver",
+        "traduccionEn": "see"
+    },
+    {
+        "kanji": "聞",
+        "escritura": "聞",
+        "pronunciaciones": [
+            "bun",
+            "ki(ku)"
+        ],
+        "traduccionES": "escuchar / preguntar",
+        "traduccionEn": "hear / ask"
+    },
+    {
+        "kanji": "話",
+        "escritura": "話",
+        "pronunciaciones": [
+            "wa",
+            "hana(su)"
+        ],
+        "traduccionES": "hablar",
+        "traduccionEn": "speak / talk"
+    }
+]
