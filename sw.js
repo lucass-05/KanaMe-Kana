@@ -1,7 +1,7 @@
 /* KanaMe Kana service worker — permite usar la app sin conexión.
    Estrategia "red primero": si hay internet siempre carga la última versión;
    si no, usa la copia guardada. Sube VERSION al publicar cambios grandes. */
-const VERSION = "kaname-kana-v2";
+const VERSION = "kaname-kana-v3";
 const CORE = ["./", "index.html", "site.webmanifest", "icons/icon-192.png", "apple-touch-icon.png", "audio/correct.mp3", "audio/wrong.mp3"];
 
 self.addEventListener("install", (e) => {
