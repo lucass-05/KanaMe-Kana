@@ -1,83 +1,252 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Hiragana & Katakana Quiz</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#121212">
+<meta name="description" content="KanaMe Kana — aprende a leer hiragana y katakana escribiendo su romaji. Práctica libre y modo test.">
+
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="KanaMe Kana">
+
+<title>KanaMe Kana — Hiragana y Katakana</title>
+
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16x16.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="120x120" href="icons/apple-touch-icon-120x120.png">
+<link rel="apple-touch-icon" sizes="152x152" href="icons/apple-touch-icon-152x152.png">
+<link rel="apple-touch-icon" sizes="167x167" href="icons/apple-touch-icon-167x167.png">
+<link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon-180x180.png">
+<link rel="manifest" href="site.webmanifest">
 
 <style>
-body {
-  font-family: Arial;
-  text-align: center;
-  background-color: #f5f5f5;
-  padding: 20px;
-}
-input {
-  font-size: 18px;
-  padding: 8px;
-  width: 90%;
-  max-width: 300px;
-}
-button {
-  font-size: 18px;
-  padding: 8px 15px;
-  margin: 5px;
-  background: #4792d9;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-#feedback { font-size: 20px; height: 30px; margin-top: 10px; }
-#stats { margin-top: 10px; font-size: 18px; }
+  :root {
+    --bg: #121212;
+    --surface: #1c1c1c;
+    --surface-raised: #262626;
+    --hairline: #333;
+    --text: #ebebeb;
+    --text-muted: #9a9a9a;
+    --text-faint: #686868;
+    --accent: #c0503a;
+    --accent-soft: #c0503a2e;
+    --bad:  #d0685c;  --bad-soft:  #d0685c1f;
+    --good: #6fae84;  --good-soft: #6fae841f;
+    --radius-lg: 22px;
+    --radius-md: 14px;
+    --radius-sm: 10px;
+    color-scheme: dark;
+  }
 
-#progressContainer {
-  width: 90%;
-  max-width: 300px;
-  height: 15px;
-  background: #ddd;
-  border-radius: 10px;
-  margin: 15px auto;
-  display: none;
-}
-#progressBar {
-  height: 100%;
-  width: 0%;
-  background: #4caf50;
-  border-radius: 10px;
-}
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { margin: 0; min-height: 100%; background: var(--bg); color: var(--text); }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Segoe UI", Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: transparent;
+    display: flex; justify-content: center;
+    overflow-x: hidden;
+  }
+  button, input { font-family: inherit; }
+  button { -webkit-user-select: none; user-select: none; }
+
+  .app {
+    width: 100%; max-width: 480px; min-height: 100dvh;
+    display: flex; flex-direction: column;
+    padding: calc(16px + env(safe-area-inset-top)) 16px calc(16px + env(safe-area-inset-bottom));
+  }
+
+  /* Header */
+  header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+  .brand { display: flex; align-items: center; gap: 10px; }
+  .brand img { width: 34px; height: 34px; border-radius: 9px; }
+  .brand h1 { margin: 0; font-size: 21px; font-weight: 700; letter-spacing: -0.01em; }
+  .brand h1 span { color: var(--text-faint); font-weight: 600; }
+  .icon-btn {
+    appearance: none; background: none; border: 1px solid var(--hairline); color: var(--text-muted);
+    width: 38px; height: 38px; border-radius: 50%; cursor: pointer;
+    display: grid; place-items: center;
+  }
+  .icon-btn:active { transform: scale(.94); }
+  .icon-btn svg { width: 18px; height: 18px; }
+  .icon-btn.off { color: var(--text-faint); }
+
+  /* Sets */
+  .sets { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 6px; }
+  .toggles { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 14px; }
+  .set-btn {
+    appearance: none; border: 1px solid var(--hairline); background: var(--surface); color: var(--text-muted);
+    border-radius: var(--radius-sm); padding: 9px 0 8px; cursor: pointer; min-width: 0;
+    transition: background .15s, color .15s, border-color .15s, transform .1s;
+  }
+  .set-btn:active { transform: scale(.95); }
+  .set-btn .n { display: block; font-size: 17px; font-weight: 600; }
+  .set-btn .count { display: block; font-size: 10.5px; margin-top: 2px; color: var(--text-faint); }
+  .set-btn.active { background: var(--accent-soft); border-color: var(--accent); color: var(--text); }
+  .set-btn.active .count { color: var(--accent); }
+  .set-btn:disabled { opacity: .45; cursor: default; transform: none; }
+
+  .toggle {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    border: 1px solid var(--hairline); background: var(--surface); border-radius: var(--radius-sm);
+    padding: 9px 10px 9px 12px; cursor: pointer; min-width: 0;
+  }
+  .toggle > span:first-child { min-width: 0; }
+  .toggle .t { font-size: 14px; font-weight: 600; }
+  .toggle .s { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 11.5px; color: var(--text-faint); margin-top: 1px; }
+  .switch { position: relative; flex: 0 0 auto; width: 44px; height: 26px; }
+  .switch input { position: absolute; opacity: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; }
+  .switch .track { position: absolute; inset: 0; border-radius: 999px; background: var(--surface-raised); border: 1px solid var(--hairline); transition: background .15s, border-color .15s; pointer-events: none; }
+  .switch .track::after { content: ""; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: var(--text-muted); transition: transform .18s, background .15s; }
+  .switch input:checked + .track { background: var(--accent-soft); border-color: var(--accent); }
+  .switch input:checked + .track::after { transform: translateX(18px); background: var(--text); }
+  .switch input:disabled + .track { opacity: .45; }
+
+  /* Status */
+  .status { display: flex; justify-content: space-between; align-items: baseline; margin: 0 2px 10px; font-size: 12.5px; color: var(--text-faint); }
+  .status b { font-weight: 600; font-variant-numeric: tabular-nums; }
+  .status .ok { color: var(--good); }
+  .status .ko { color: var(--bad); }
+  .progress { height: 3px; background: var(--surface-raised); border-radius: 3px; overflow: hidden; margin-bottom: 14px; }
+  .progress > div { height: 100%; width: 0; background: var(--good); transition: width .35s ease; }
+
+  /* Card */
+  .card {
+    position: relative; flex: 1; min-height: 260px; margin-bottom: 12px;
+    border-radius: var(--radius-lg); background: var(--surface); border: 1px solid var(--hairline);
+    display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
+    transition: border-color .15s, background .15s;
+  }
+  .card.ok { border-color: var(--good); background: linear-gradient(var(--good-soft), var(--good-soft)), var(--surface); }
+  .card.ko { border-color: var(--bad);  background: linear-gradient(var(--bad-soft), var(--bad-soft)), var(--surface); }
+  .tag { position: absolute; top: 16px; left: 18px; font-size: 11px; color: var(--text-faint); letter-spacing: .04em; }
+  .kana { font-size: clamp(96px, 34vw, 132px); line-height: 1; font-weight: 500; }
+  .kana.long { font-size: clamp(80px, 27vw, 110px); }
+  .feedback { position: absolute; bottom: 20px; left: 0; right: 0; font-size: 15px; font-weight: 600; min-height: 20px; }
+  .feedback.ok { color: var(--good); }
+  .feedback.ko { color: var(--bad); }
+  .feedback .ans { font-size: 22px; letter-spacing: .02em; margin-left: 4px; }
+
+  /* Answer row */
+  .answer { display: flex; gap: 8px; margin-bottom: 10px; }
+  .answer input {
+    flex: 1; min-width: 0; height: 54px; padding: 0 16px;
+    background: var(--surface); color: var(--text); border: 1px solid var(--hairline); border-radius: var(--radius-md);
+    font-size: 18px; letter-spacing: .02em; outline: none; transition: border-color .15s;
+  }
+  .answer input::placeholder { color: var(--text-faint); }
+  .answer input:focus { border-color: var(--text-faint); }
+  .send {
+    appearance: none; border: 1px solid var(--accent); background: var(--accent-soft); color: var(--text);
+    border-radius: var(--radius-md); padding: 0 18px; height: 54px; font-size: 15px; font-weight: 700; cursor: pointer;
+  }
+  .send:active, .pill-btn:active { transform: scale(.96); }
+
+  .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .pill-btn { appearance: none; border: 1px solid var(--accent); background: var(--accent-soft); color: var(--text); font-size: 14px; font-weight: 600; padding: 12px 18px; border-radius: 999px; cursor: pointer; }
+  .pill-btn.ghost { border-color: var(--hairline); background: transparent; color: var(--text-muted); }
+
+  /* Result sheet */
+  .sheet-backdrop { position: fixed; inset: 0; background: #000a; display: none; align-items: flex-end; justify-content: center; z-index: 10; }
+  .sheet-backdrop.open { display: flex; }
+  .sheet { width: 100%; max-width: 480px; background: var(--surface); border-top: 1px solid var(--hairline); border-radius: 22px 22px 0 0; padding: 22px 18px calc(20px + env(safe-area-inset-bottom)); max-height: 88dvh; overflow-y: auto; }
+  .sheet h2 { margin: 0 0 4px; font-size: 18px; }
+  .sheet .sub { margin: 0 0 16px; font-size: 13px; color: var(--text-muted); line-height: 1.5; }
+  .sheet h3 { margin: 18px 0 8px; font-size: 12px; color: var(--text-faint); letter-spacing: .06em; text-transform: uppercase; }
+  .grade { font-size: 54px; font-weight: 700; line-height: 1; font-variant-numeric: tabular-nums; }
+  .grade small { font-size: 20px; color: var(--text-faint); font-weight: 600; }
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 16px; }
+  .stat { background: var(--surface-raised); border-radius: var(--radius-sm); padding: 10px; text-align: center; }
+  .stat b { display: block; font-size: 20px; font-variant-numeric: tabular-nums; }
+  .stat span { font-size: 11px; color: var(--text-muted); }
+  .fails { display: grid; grid-template-columns: repeat(auto-fill, minmax(76px, 1fr)); gap: 6px; }
+  .fail { background: var(--bad-soft); border-radius: var(--radius-sm); padding: 8px 4px; text-align: center; }
+  .fail b { display: block; font-size: 24px; font-weight: 500; }
+  .fail span { font-size: 12px; color: var(--text-muted); }
+  .perfect { font-size: 14px; color: var(--good); }
+  .row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 22px; }
+  .row .pill-btn { flex: 1; min-width: 140px; }
+
+  @media (max-height: 700px) {
+    .card { min-height: 190px; }
+    .kana { font-size: 92px; }
+    .kana.long { font-size: 76px; }
+  }
 </style>
 </head>
-
 <body>
+<div class="app">
+  <header>
+    <div class="brand">
+      <img src="icons/icon-192.png" alt="">
+      <h1>KanaMe <span>Kana</span></h1>
+    </div>
+    <button class="icon-btn" id="soundBtn" aria-label="Sonido" title="Sonido"></button>
+  </header>
 
-<h1>Hiragana & Katakana Quiz</h1>
+  <div class="sets" id="sets"></div>
 
-<p id="hiragana" style="font-size:60px;"></p>
+  <div class="toggles">
+    <label class="toggle" for="combo">
+      <span><span class="t">Combinados</span><span class="s">きゃ, しゅ, ちょ</span></span>
+      <span class="switch"><input type="checkbox" id="combo"><span class="track"></span></span>
+    </label>
+    <label class="toggle" for="noTenten">
+      <span><span class="t">Sin tenten</span><span class="s">Sin ば ni ぱ</span></span>
+      <span class="switch"><input type="checkbox" id="noTenten"><span class="track"></span></span>
+    </label>
+  </div>
 
-<div id="progressContainer">
-  <div id="progressBar"></div>
+  <div class="status"><span id="modeLabel">Práctica libre</span><span>Aciertos <b class="ok" id="okCount">0</b> · Errores <b class="ko" id="koCount">0</b></span></div>
+  <div class="progress"><div id="progressBar"></div></div>
+
+  <div class="card" id="card">
+    <div class="tag" id="tag"></div>
+    <div class="kana" id="kana"></div>
+    <div class="feedback" id="feedback"></div>
+  </div>
+
+  <form class="answer" id="answerForm" autocomplete="off">
+    <input type="text" id="answer" placeholder="Escribe el romaji" autocapitalize="none" autocorrect="off" spellcheck="false" enterkeyhint="send" aria-label="Romaji">
+    <button class="send" type="submit">Enviar</button>
+  </form>
+
+  <div class="actions">
+    <button class="pill-btn" id="testBtn">Modo test</button>
+    <button class="pill-btn ghost" id="resetBtn">Empezar de nuevo</button>
+  </div>
 </div>
 
-<p id="feedback"></p>
-<input type="text" id="answer" placeholder="Escribe romaji">
-
-<div style="margin-top:10px">
-  <label><input type="checkbox" id="simpleH" checked> Hiragana simples</label><br>
-  <label><input type="checkbox" id="complexH"> Hiragana complejos</label><br>
-  <label><input type="checkbox" id="katakanaChk"> Katakana</label>
+<div class="sheet-backdrop" id="sheet">
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="resultTitle">
+    <h2 id="resultTitle">Resultado del test</h2>
+    <p class="sub" id="resultSub"></p>
+    <div class="grade" id="grade"></div>
+    <div class="stats" id="resultStats"></div>
+    <h3 id="failsTitle">Fallos</h3>
+    <div id="fails"></div>
+    <div class="row">
+      <button class="pill-btn" id="retryFails">Repasar fallos</button>
+      <button class="pill-btn ghost" id="closeResult">Cerrar</button>
+    </div>
+  </div>
 </div>
 
-<button onclick="checkAnswer()">Enviar</button>
-<button onclick="resetQuiz()">Empezar de nuevo</button>
-<button onclick="startTest()">Modo test</button>
-
-<p id="stats">Aciertos: 0 | Errores: 0</p>
+<audio id="sndOk" src="audio/correct.mp3" preload="auto"></audio>
+<audio id="sndKo" src="audio/wrong.mp3" preload="auto"></audio>
 
 <script>
-// ------------------ DATOS ------------------
+(function () {
+  "use strict";
 
-const hiraganaSimple = {
+  // ------------------ DATOS ------------------
+  // Solo se escribe el hiragana: el katakana se obtiene desplazando cada carácter (あ→ア, きゃ→キャ).
+  var BASE = {
       'あ':'a','い':'i','う':'u','え':'e','お':'o',
       'か':'ka','き':'ki','く':'ku','け':'ke','こ':'ko',
       'が':'ga','ぎ':'gi','ぐ':'gu','げ':'ge','ご':'go',
@@ -93,9 +262,8 @@ const hiraganaSimple = {
       'や':'ya','ゆ':'yu','よ':'yo',
       'ら':'ra','り':'ri','る':'ru','れ':'re','ろ':'ro',
       'わ':'wa','を':'wo','ん':'n'
-    };
-
-    const hiraganaComplex = {
+  };
+  var COMBO = {
       'きゃ':'kya','きゅ':'kyu','きょ':'kyo',
       'ぎゃ':'gya','ぎゅ':'gyu','ぎょ':'gyo',
       'しゃ':'sha','しゅ':'shu','しょ':'sho',
@@ -107,167 +275,239 @@ const hiraganaSimple = {
       'ぴゃ':'pya','ぴゅ':'pyu','ぴょ':'pyo',
       'みゃ':'mya','みゅ':'myu','みょ':'myo',
       'りゃ':'rya','りゅ':'ryu','りょ':'ryo'
-    };
-
-    const katakanaChars = {
-      'ア':'a','イ':'i','ウ':'u','エ':'e','オ':'o',
-      'カ':'ka','キ':'ki','ク':'ku','ケ':'ke','コ':'ko',
-      'ガ':'ga','ギ':'gi','グ':'gu','ゲ':'ge','ゴ':'go',
-      'サ':'sa','シ':'shi','ス':'su','セ':'se','ソ':'so',
-      'ザ':'za','ジ':'ji','ズ':'zu','ゼ':'ze','ゾ':'zo',
-      'タ':'ta','チ':'chi','ツ':'tsu','テ':'te','ト':'to',
-      'ダ':'da','デ':'de','ド':'do',
-      'ナ':'na','ニ':'ni','ヌ':'nu','ネ':'ne','ノ':'no',
-      'ハ':'ha','ヒ':'hi','フ':'fu','ヘ':'he','ホ':'ho',
-      'バ':'ba','ビ':'bi','ブ':'bu','ベ':'be','ボ':'bo',
-      'パ':'pa','ピ':'pi','プ':'pu','ペ':'pe','ポ':'po',
-      'マ':'ma','ミ':'mi','ム':'mu','メ':'me','モ':'mo',
-      'ヤ':'ya','ユ':'yu','ヨ':'yo',
-      'ラ':'ra','リ':'ri','ル':'ru','レ':'re','ロ':'ro',
-      'ワ':'wa','ヲ':'wo','ン':'n'
-    };
-
-// ------------------ ESTADO ------------------
-
-let pool = {};
-let currentChar = '';
-let correct = 0;
-let wrong = 0;
-
-let testMode = false;
-let testList = [];
-let testIndex = 0;
-let failedChars = [];
-
-// ------------------ FUNCIONES ------------------
-
-function updatePool() {
-  pool = {};
-  if (simpleH.checked) Object.assign(pool, hiraganaSimple);
-  if (complexH.checked) Object.assign(pool, hiraganaComplex);
-  if (katakanaChk.checked) Object.assign(pool, katakanaChars);
-}
-
-function shuffle(array) {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
+  };
+  function toKatakana(s) {
+    return s.replace(/[\u3041-\u3096]/g, function (c) { return String.fromCharCode(c.charCodeAt(0) + 0x60); });
   }
-}
+  var SCRIPTS = [
+    { id: "hira", label: "あ", name: "Hiragana", conv: function (s) { return s; } },
+    { id: "kata", label: "ア", name: "Katakana", conv: toKatakana }
+  ];
 
-function showChar() {
-  hiragana.innerText = currentChar;
-  answer.value = '';
-  feedback.innerText = '';
-  updateProgress();
-}
+  // Romanizaciones alternativas que también se aceptan (Kunrei / variantes habituales)
+  var ALT = {
+    shi: ["si"], chi: ["ti"], tsu: ["tu"], fu: ["hu"], ji: ["zi"], wo: ["o"], n: ["nn"],
+    sha: ["sya"], shu: ["syu"], sho: ["syo"],
+    ja: ["zya", "jya"], ju: ["zyu", "jyu"], jo: ["zyo", "jyo"],
+    cha: ["tya", "cya"], chu: ["tyu", "cyu"], cho: ["tyo", "cyo"]
+  };
 
-function randomChar() {
-  if (testMode) return;
-  updatePool();
-  const keys = Object.keys(pool);
-  if (!keys.length) return;
-  currentChar = keys[Math.floor(Math.random() * keys.length)];
-  showChar();
-}
+  // ¿Lleva tenten (゛) o maru (゜)? En forma descompuesta, el signo es un carácter aparte.
+  function hasTenten(ch) { return /[\u3099\u309A]/.test(ch.normalize("NFD")); }
 
-function startTest() {
-  updatePool();
-  testList = Object.keys(pool);
-  if (!testList.length) {
-    alert("Selecciona al menos una opción");
-    return;
+  // ------------------ AJUSTES (se recuerdan en este dispositivo) ------------------
+  var PREF_KEY = "kaname-kana.prefs.v1";
+  var prefs = { hira: true, kata: false, combo: false, noTenten: false, sound: true };
+  try { var saved = JSON.parse(localStorage.getItem(PREF_KEY) || "null"); if (saved) for (var key in prefs) if (key in saved) prefs[key] = saved[key]; } catch (e) {}
+  function savePrefs() { try { localStorage.setItem(PREF_KEY, JSON.stringify(prefs)); } catch (e) {} }
+
+  // ------------------ ESTADO ------------------
+  var pool = {}, current = "", correct = 0, wrong = 0, locked = false;
+  var testMode = false, testList = [], testIndex = 0, failed = [];
+
+  var $ = function (id) { return document.getElementById(id); };
+  var answer = $("answer"), card = $("card"), kana = $("kana"), feedback = $("feedback");
+
+  // ------------------ INTERFAZ ------------------
+  // Kana activos según los ajustes: { kana: romaji }
+  function buildPool(p) {
+    var out = {};
+    SCRIPTS.forEach(function (sc) {
+      if (!p[sc.id]) return;
+      [BASE, p.combo ? COMBO : {}].forEach(function (src) {
+        Object.keys(src).forEach(function (k) {
+          if (p.noTenten && hasTenten(k)) return;
+          out[sc.conv(k)] = src[k];
+        });
+      });
+    });
+    return out;
   }
 
-  shuffle(testList);
-  testIndex = 0;
-  correct = 0;
-  wrong = 0;
-  failedChars = [];
-  testMode = true;
-
-  simpleH.disabled = complexH.disabled = katakanaChk.disabled = true;
-  progressContainer.style.display = "block";
-  progressBar.style.width = "0%";
-
-  currentChar = testList[0];
-  updateStats();
-  showChar();
-}
-
-function checkAnswer() {
-  const ans = answer.value.trim().toLowerCase();
-  if (!ans) return;
-
-  if (ans === pool[currentChar]) {
-    feedback.innerText = "✅ Correcto";
-    correct++;
-  } else {
-    feedback.innerText = `❌ ${pool[currentChar]}`;
-    wrong++;
-    failedChars.push(`${currentChar} → ${pool[currentChar]}`);
+  function renderSets() {
+    var box = $("sets"); box.innerHTML = "";
+    SCRIPTS.forEach(function (sc) {
+      var only = {}; for (var k in prefs) only[k] = prefs[k];
+      SCRIPTS.forEach(function (x) { only[x.id] = x.id === sc.id; });
+      var b = document.createElement("button");
+      b.className = "set-btn" + (prefs[sc.id] ? " active" : "");
+      b.disabled = testMode;
+      b.setAttribute("aria-pressed", prefs[sc.id] ? "true" : "false");
+      b.innerHTML = '<span class="n">' + sc.label + '</span><span class="count">' + sc.name + " · " + Object.keys(buildPool(only)).length + "</span>";
+      b.addEventListener("click", function () {
+        prefs[sc.id] = !prefs[sc.id];
+        if (!SCRIPTS.some(function (x) { return prefs[x.id]; })) prefs[sc.id] = true; // siempre al menos uno
+        savePrefs(); renderSets(); randomChar();
+      });
+      box.appendChild(b);
+    });
+    ["combo", "noTenten"].forEach(function (id) { $(id).checked = prefs[id]; $(id).disabled = testMode; });
   }
 
-  updateStats();
+  var ICON_ON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/></svg>';
+  var ICON_OFF = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4V5z"/><path d="m22 9-6 6M16 9l6 6"/></svg>';
+  function renderSound() {
+    var b = $("soundBtn");
+    b.innerHTML = prefs.sound ? ICON_ON : ICON_OFF;
+    b.classList.toggle("off", !prefs.sound);
+    b.setAttribute("aria-pressed", prefs.sound ? "true" : "false");
+  }
+  function play(ok) {
+    if (!prefs.sound) return;
+    try { var a = $(ok ? "sndOk" : "sndKo"); a.currentTime = 0; var p = a.play(); if (p && p.catch) p.catch(function () {}); } catch (e) {}
+  }
 
-  if (testMode) {
-    testIndex++;
-    if (testIndex >= testList.length) {
-      finishTest();
+  function updateStats() { $("okCount").textContent = correct; $("koCount").textContent = wrong; }
+  function updateProgress() {
+    $("progressBar").style.width = testMode ? ((testIndex / testList.length) * 100) + "%" : "0%";
+    $("modeLabel").textContent = testMode ? "Test · " + Math.min(testIndex + 1, testList.length) + " de " + testList.length : "Práctica libre";
+  }
+
+  // ------------------ LÓGICA ------------------
+  function updatePool() { pool = buildPool(prefs); }
+
+  function shuffle(a) {
+    for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)), t = a[i]; a[i] = a[j]; a[j] = t; }
+    return a;
+  }
+
+  function showChar() {
+    kana.textContent = current;
+    kana.classList.toggle("long", current.length > 1);
+    $("tag").textContent = /[\u30A0-\u30FF]/.test(current) ? "Katakana" : "Hiragana";
+    card.classList.remove("ok", "ko");
+    feedback.className = "feedback"; feedback.textContent = "";
+    answer.value = "";
+    locked = false;
+    updateProgress();
+  }
+
+  function randomChar() {
+    if (testMode) return;
+    updatePool();
+    var keys = Object.keys(pool);
+    if (!keys.length) return;
+    var next = current;
+    if (keys.length > 1) { while (next === current) next = keys[Math.floor(Math.random() * keys.length)]; }
+    else next = keys[0];
+    current = next;
+    showChar();
+  }
+
+  function isCorrect(ans, romaji) {
+    return ans === romaji || (ALT[romaji] || []).indexOf(ans) !== -1;
+  }
+
+  function checkAnswer() {
+    if (locked || !current) return;
+    var ans = answer.value.trim().toLowerCase();
+    if (!ans) return;
+    locked = true;
+    var romaji = pool[current];
+    var ok = isCorrect(ans, romaji);
+
+    if (ok) {
+      correct++;
+      card.classList.add("ok");
+      feedback.className = "feedback ok"; feedback.textContent = "Correcto";
     } else {
-      currentChar = testList[testIndex];
-      setTimeout(showChar, 600);
+      wrong++;
+      failed.push(current);
+      card.classList.add("ko");
+      feedback.className = "feedback ko";
+      feedback.innerHTML = "Era <span class=\"ans\"></span>";
+      feedback.querySelector(".ans").textContent = romaji;
     }
-  } else {
-    setTimeout(randomChar, 600);
-  }
-}
+    play(ok);
+    updateStats();
 
-function updateProgress() {
-  if (!testMode) return;
-  progressBar.style.width =
-    ((testIndex + 1) / testList.length) * 100 + "%";
-}
-
-function finishTest() {
-  const nota = ((correct / testList.length) * 10).toFixed(2);
-
-  let mensaje = `Nota final: ${nota}/10\n\n`;
-  if (failedChars.length) {
-    mensaje += "Fallos:\n" + failedChars.join("\n");
-  } else {
-    mensaje += "¡Perfecto! Sin fallos 🎉";
+    var delay = ok ? 600 : 1300;
+    if (testMode) {
+      testIndex++;
+      updateProgress();
+      if (testIndex >= testList.length) setTimeout(finishTest, delay);
+      else { current = testList[testIndex]; setTimeout(showChar, delay); }
+    } else {
+      setTimeout(randomChar, delay);
+    }
   }
 
-  alert(mensaje);
+  function startTest(list) {
+    updatePool();
+    testList = shuffle((list || Object.keys(pool)).slice());
+    if (!testList.length) return;
+    testIndex = 0; correct = 0; wrong = 0; failed = [];
+    testMode = true;
+    renderSets();
+    $("testBtn").textContent = "Salir del test";
+    current = testList[0];
+    updateStats(); showChar();
+    answer.focus();
+  }
 
-  testMode = false;
-  progressContainer.style.display = "none";
-  simpleH.disabled = complexH.disabled = katakanaChk.disabled = false;
-  randomChar();
-}
+  function endTest() {
+    testMode = false;
+    $("testBtn").textContent = "Modo test";
+    renderSets();
+    updateProgress();
+  }
 
-function updateStats() {
-  stats.innerText = `Aciertos: ${correct} | Errores: ${wrong}`;
-}
+  function finishTest() {
+    var total = testList.length;
+    var nota = (correct / total) * 10;
+    $("grade").innerHTML = (nota % 1 ? nota.toFixed(1).replace(".", ",") : nota) + " <small>/ 10</small>";
+    $("resultSub").textContent = nota === 10 ? "¡Perfecto! Te los sabes todos." : nota >= 8 ? "Muy bien, ya casi los dominas." : nota >= 5 ? "Vas por buen camino. Repasa los fallos." : "Sigue practicando: repasa los fallos y vuelve a intentarlo.";
+    $("resultStats").innerHTML =
+      '<div class="stat"><b>' + total + '</b><span>preguntas</span></div>' +
+      '<div class="stat"><b style="color:var(--good)">' + correct + '</b><span>aciertos</span></div>' +
+      '<div class="stat"><b style="color:var(--bad)">' + wrong + '</b><span>errores</span></div>';
+    var box = $("fails"); box.innerHTML = "";
+    var uniq = failed.filter(function (k, i) { return failed.indexOf(k) === i; });
+    if (uniq.length) {
+      box.className = "fails";
+      uniq.forEach(function (k) {
+        var d = document.createElement("div"); d.className = "fail";
+        var b = document.createElement("b"); b.textContent = k;
+        var s = document.createElement("span"); s.textContent = pool[k];
+        d.appendChild(b); d.appendChild(s); box.appendChild(d);
+      });
+      $("failsTitle").style.display = ""; $("retryFails").style.display = "";
+    } else {
+      box.className = "perfect"; box.textContent = "Sin fallos 🎉";
+      $("failsTitle").style.display = "none"; $("retryFails").style.display = "none";
+    }
+    $("retryFails").onclick = function () { closeSheet(); startTest(uniq); };
+    endTest();
+    $("sheet").classList.add("open");
+    answer.blur();
+  }
 
-function resetQuiz() {
-  testMode = false;
-  correct = 0;
-  wrong = 0;
-  progressContainer.style.display = "none";
-  simpleH.disabled = complexH.disabled = katakanaChk.disabled = false;
-  updateStats();
-  randomChar();
-}
+  function closeSheet() { $("sheet").classList.remove("open"); }
 
-answer.addEventListener("keydown", e => {
-  if (e.key === "Enter") checkAnswer();
-});
+  function resetQuiz() {
+    if (testMode) endTest();
+    correct = 0; wrong = 0; failed = [];
+    updateStats(); randomChar();
+  }
 
-// Inicio
-randomChar();
+  // ------------------ EVENTOS ------------------
+  $("answerForm").addEventListener("submit", function (e) { e.preventDefault(); checkAnswer(); answer.focus(); });
+  $("testBtn").addEventListener("click", function () { if (testMode) resetQuiz(); else startTest(); });
+  $("resetBtn").addEventListener("click", resetQuiz);
+  $("closeResult").addEventListener("click", function () { closeSheet(); resetQuiz(); });
+  $("sheet").addEventListener("click", function (e) { if (e.target === this) { closeSheet(); resetQuiz(); } });
+  ["combo", "noTenten"].forEach(function (id) {
+    $(id).addEventListener("change", function () { prefs[id] = this.checked; savePrefs(); renderSets(); randomChar(); });
+  });
+  $("soundBtn").addEventListener("click", function () { prefs.sound = !prefs.sound; savePrefs(); renderSound(); });
+
+  // Inicio
+  renderSets(); renderSound(); updateStats(); randomChar();
+
+  if ("serviceWorker" in navigator && location.protocol === "https:") {
+    navigator.serviceWorker.register("sw.js").catch(function () {});
+  }
+})();
 </script>
-
 </body>
 </html>
