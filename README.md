@@ -65,7 +65,7 @@ Sin cuentas ni registro: tus ajustes se guardan solo en tu dispositivo. Para sab
 ## Familia KanaMe
 
 - **KanaMe Kana**: hiragana y katakana (esta app).
-- **[KanaMe Kanji](https://github.com/lucass-05/KanaMe-Kanji)**: los 2136 kanji Jōyō con repetición espaciada, 20 kanji nuevos cada día y rachas con premios. Es el siguiente paso cuando ya lees kana.
+- **[KanaMe Kanji](https://github.com/lucass-05/KanaMe-Kanji)**: los 2136 kanji Jōyō con repetición espaciada, 10 kanji nuevos cada día y rachas con premios. Es el siguiente paso cuando ya lees kana.
 
 ## Para desarrolladores
 
