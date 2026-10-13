@@ -49,11 +49,14 @@ Se aceptan tanto la romanización Hepburn como las variantes más habituales: *s
 
 > Con 10 minutos al día se suele leer todo el hiragana en una semana, y el katakana en otra.
 
-## Instalar en el iPhone
+## Instalar en el móvil
 
-Abre la app en **Safari** y toca **Compartir → Añadir a pantalla de inicio**. Se abrirá a pantalla completa, como una app nativa.
+Añádela a la pantalla de inicio y se abrirá a pantalla completa, como una app nativa.
 
-En Android (Chrome): menú **⋮ → Instalar aplicación**.
+| iPhone (Safari) | Samsung / Android |
+|:---:|:---:|
+| <img src="docs/instalar-iphone.png" width="320" alt="Cómo instalar en iPhone"> | <img src="docs/instalar-samsung.png" width="320" alt="Cómo instalar en Samsung"> |
+| **Compartir → Añadir a pantalla de inicio** | **Menú ≡ → Añadir página a → Pantalla de inicio**<br><sub>En Chrome: ⋮ → Añadir a pantalla de inicio</sub> |
 
 ## Familia KanaMe
 
