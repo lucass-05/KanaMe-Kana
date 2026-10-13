@@ -24,6 +24,9 @@
 <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon-180x180.png">
 <link rel="manifest" href="site.webmanifest">
 
+<!-- Estadísticas de visitas anónimas y sin cookies (GoatCounter). Si no hay conexión, no hace nada. -->
+<script data-goatcounter="https://kaname.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
+
 <style>
   :root {
     --bg: #121212;
@@ -478,6 +481,7 @@
     }
     $("retryFails").onclick = function () { closeSheet(); startTest(uniq); };
     endTest();
+    try { if (window.goatcounter && window.goatcounter.count) window.goatcounter.count({ path: "evento/test-terminado", title: "test-terminado", event: true }); } catch (e) {}
     $("sheet").classList.add("open");
     answer.blur();
   }

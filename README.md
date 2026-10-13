@@ -58,10 +58,14 @@ Añádela a la pantalla de inicio y se abrirá a pantalla completa, como una app
 | <img src="docs/instalar-iphone.png" width="320" alt="Cómo instalar en iPhone"> | <img src="docs/instalar-samsung.png" width="320" alt="Cómo instalar en Samsung"> |
 | **Compartir → Añadir a pantalla de inicio** | **Menú ≡ → Añadir página a → Pantalla de inicio**<br><sub>En Chrome: ⋮ → Añadir a pantalla de inicio</sub> |
 
+## Privacidad
+
+Sin cuentas ni registro: tus ajustes se guardan solo en tu dispositivo. Para saber cuánta gente usa la app se cuentan las visitas de forma anónima con [GoatCounter](https://www.goatcounter.com): sin cookies, sin datos personales y sin seguimiento entre webs.
+
 ## Familia KanaMe
 
 - **KanaMe Kana**: hiragana y katakana (esta app).
-- **[KanaMe Kanji](https://github.com/lucass-05/KanaMe-Kanji)**: los 2136 kanji Jōyō con repetición espaciada. Es el siguiente paso cuando ya lees kana.
+- **[KanaMe Kanji](https://github.com/lucass-05/KanaMe-Kanji)**: los 2136 kanji Jōyō con repetición espaciada, 20 kanji nuevos cada día y rachas con premios. Es el siguiente paso cuando ya lees kana.
 
 ## Para desarrolladores
 
