@@ -933,6 +933,7 @@
   .gcell b { display: block; font-size: 24px; font-weight: 500; line-height: 1.15; }
   .gcell span { display: block; font-size: 11.5px; color: var(--text-muted); margin-top: 1px; }
   .gcell.empty { background: none; cursor: default; }
+  .ghead { text-align: center; font-size: 11px; font-weight: 700; letter-spacing: .06em; color: var(--text-faint); text-transform: uppercase; padding: 2px 0; }
   .gcell.say { border-color: var(--accent); background: var(--accent-soft); }
   .gcell .tip { color: var(--accent); }
   .gtips { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
@@ -1709,7 +1710,7 @@
   var EXTRA_ROMAJI = { "ぢ": "ji (dji)", "づ": "zu (dzu)" };
   var SPECIAL = { "し": 1, "ち": 1, "つ": 1, "ふ": 1, "ん": 1, "を": 1, "じ": 1, "ず": 1, "ら": 1, "り": 1, "る": 1, "れ": 1, "ろ": 1 };
   var TIPS = [
-    ["あいうえお", "<b>Vocales</b>: como en español. La <b>u</b> se dice sin redondear los labios y, entre consonantes como k, s o t, casi no se oye: です suena «des»."],
+    ["あえいおう", "<b>Vocales</b>: como en español. La <b>u</b> se dice sin redondear los labios y, entre consonantes como k, s o t, casi no se oye: です suena «des»."],
     ["らりるれろ", "<b>R</b>: siempre suave, como la r de «pero», nunca como «perro». A veces se acerca un poco a una l."],
     ["し・ち・つ", "<b>し shi</b> se dice con «sh» suave; <b>ち chi</b> como la «ch» de «chico»; <b>つ tsu</b> con t y s juntas, como en «tsunami»."],
     ["ふ", "<b>ふ fu</b>: soplando entre los labios casi cerrados, sin tocar los dientes. Está entre una f y una j muy suave."],
@@ -1728,10 +1729,13 @@
     try { speechSynthesis.cancel(); var u = new SpeechSynthesisUtterance(txt); u.lang = "ja-JP"; u.rate = .8; speechSynthesis.speak(u); } catch (e) {}
   }
   function romajiOf(h) { return EXTRA_ROMAJI[h] || BASE[h] || COMBO[h] || ""; }
+  // Columnas en el orden de las vocales en español (a, e, i, o, u) en vez del japonés (a, i, u, e, o)
+  var ES5 = [0, 3, 1, 4, 2], ES3 = [0, 2, 1];
   function guideTable(rows, cols) {
     var conv = guideScript === "kata" ? toKatakana : function (s) { return s; };
-    var g = el("div", "gtable c" + cols);
-    rows.forEach(function (r) {
+    var g = el("div", "gtable c" + cols), ord = cols === 5 ? ES5 : ES3;
+    (cols === 5 ? ["a", "e", "i", "o", "u"] : ["-ya", "-yo", "-yu"]).forEach(function (h) { g.appendChild(el("span", "ghead", h)); });
+    rows.map(function (r) { return ord.map(function (i) { return r[i]; }); }).forEach(function (r) {
       r.forEach(function (h) {
         if (!h) { g.appendChild(el("span", "gcell empty")); return; }
         var b = el("button", "gcell"), k = conv(h);
@@ -1754,7 +1758,7 @@
       b.onclick = function () { guideScript = sc.id; lsSet(GUIDE_KEY, sc.id); renderGuide(); $("guideBody").scrollIntoView({ block: "nearest" }); };
       tabs.appendChild(b);
     });
-    $("guideSub").textContent = (canSpeak ? "Toca un kana para oírlo. " : "") + "En color, los que no se pronuncian como parece. Más abajo tienes los trucos de pronunciación.";
+    $("guideSub").textContent = "Ordenada por vocales como en español (a, e, i, o, u) para que sea más fácil; en Japón se ordenan a, i, u, e, o. " + (canSpeak ? "Toca un kana para oírlo. " : "") + "En color, los que no se pronuncian como parece; más abajo tienes los trucos de pronunciación.";
     var body = $("guideBody"); body.innerHTML = "";
     body.appendChild(el("h3", null, "Básicos"));
     body.appendChild(guideTable(ROWS, 5));
