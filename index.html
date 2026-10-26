@@ -1724,28 +1724,10 @@
     ["ー・おう", "<b>Vocales largas</b>: duran el doble. En katakana se marcan con ー (コーヒー «kōhī»); en hiragana, por ejemplo, con おう o えい."],
     ["きゃ", "<b>Combinados</b>: son una sola sílaba rápida, no dos: きゃ es «kya» (casi «kia» de un golpe)."]
   ];
-  // Pronunciación: grabaciones propias en audio/kana/<romaji>.mp3 (voz sintetizada con Open JTalk), que suenan
-  // en cualquier navegador. La voz del sistema (speechSynthesis) solo se usa si falla el audio: en algunos
-  // navegadores (p. ej. Samsung Internet) no hay voz japonesa instalada y no suena nada.
-  var canSpeak = true;
-  var SAME_SOUND = { "ぢ": "ji", "づ": "zu" };
-  var voice = new Audio(); voice.preload = "auto";
-  function toHiragana(s) { return s.replace(/[\u30A1-\u30F6]/g, function (c) { return String.fromCharCode(c.charCodeAt(0) - 0x60); }); }
-  function ttsFallback(txt) {
-    try {
-      if (!("speechSynthesis" in window)) return;
-      var u = new SpeechSynthesisUtterance(txt); u.lang = "ja-JP"; u.rate = .8;
-      var v = (speechSynthesis.getVoices() || []).filter(function (x) { return /^ja/i.test(x.lang); })[0]; if (v) u.voice = v;
-      speechSynthesis.speak(u);
-    } catch (e) {}
-  }
+  var canSpeak = "speechSynthesis" in window && typeof SpeechSynthesisUtterance !== "undefined";
   function speak(txt) {
-    var h = toHiragana(txt), r = SAME_SOUND[h] || BASE[h] || COMBO[h];
-    if (!r) { ttsFallback(txt); return; }
-    try {
-      voice.pause(); voice.src = "audio/kana/" + r + ".mp3"; voice.currentTime = 0;
-      var p = voice.play(); if (p && p.catch) p.catch(function () { ttsFallback(txt); });
-    } catch (e) { ttsFallback(txt); }
+    if (!canSpeak) return;
+    try { speechSynthesis.cancel(); var u = new SpeechSynthesisUtterance(txt); u.lang = "ja-JP"; u.rate = .8; speechSynthesis.speak(u); } catch (e) {}
   }
   function romajiOf(h) { return EXTRA_ROMAJI[h] || BASE[h] || COMBO[h] || ""; }
   // Columnas en el orden de las vocales en español (a, e, i, o, u) en vez del japonés (a, i, u, e, o)
