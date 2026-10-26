@@ -605,6 +605,8 @@
   .card.ok { border-color: var(--good); background: linear-gradient(var(--good-soft), var(--good-soft)), var(--surface); }
   .card.ko { border-color: var(--bad);  background: linear-gradient(var(--bad-soft), var(--bad-soft)), var(--surface); }
   .tag { position: absolute; top: 16px; left: 18px; font-size: 11px; color: var(--text-faint); letter-spacing: .04em; }
+  /* Misma letra para los kana del test y los de la guía */
+  .kana, .gcell b, .kj { font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", sans-serif; font-weight: 500; font-style: normal; }
   .kana { font-size: clamp(96px, 34vw, 132px); line-height: 1; font-weight: 500; }
   .kana.long { font-size: clamp(80px, 27vw, 110px); }
   .feedback { position: absolute; bottom: 20px; left: 0; right: 0; font-size: 15px; font-weight: 600; min-height: 20px; }
@@ -940,6 +942,7 @@
   .gtips li { background: var(--surface-raised); border-radius: var(--radius-sm); padding: 9px 12px; font-size: 13.5px; line-height: 1.5; color: var(--text-muted); }
   .gtips li b { color: var(--text); }
   .gtips li .jp { color: var(--accent); font-weight: 600; }
+  .gtips li .jp .kj { font-weight: 500; }
 </style>
 </head>
 <body>
@@ -1752,6 +1755,7 @@
     });
     return g;
   }
+  function kj(html) { return html.replace(/([\u3040-\u30FF]+)/g, '<span class="kj">$1</span>'); } // kana sin negrita
   function renderGuide() {
     var tabs = $("guideTabs"); tabs.innerHTML = "";
     SCRIPTS.forEach(function (sc) {
@@ -1770,8 +1774,8 @@
     body.appendChild(el("h3", null, "Cómo se pronuncian (para hispanohablantes)"));
     var ul = el("ul", "gtips");
     TIPS.forEach(function (t) {
-      var li = el("li"), jp = el("span", "jp", t[0] + " · "); li.appendChild(jp);
-      var sp = el("span"); sp.innerHTML = t[1]; li.appendChild(sp); ul.appendChild(li);
+      var li = el("li"), jp = el("span", "jp"); jp.innerHTML = kj(t[0]) + " · "; li.appendChild(jp);
+      var sp = el("span"); sp.innerHTML = kj(t[1]); li.appendChild(sp); ul.appendChild(li);
     });
     body.appendChild(ul);
   }
