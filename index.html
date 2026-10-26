@@ -906,6 +906,19 @@
   .rem-row .switch .track::after { width: 20px; height: 20px; }
   .rem-row .switch input:checked + .track::after { transform: translateX(18px); }
 
+  /* Reto diario: 5, 10 o 20 aciertos */
+  .size-opts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .size-opt { appearance: none; border: 1px solid var(--hairline); background: var(--surface-raised); color: var(--text); border-radius: var(--radius-md); padding: 12px 4px 10px; cursor: pointer; text-align: center; transition: border-color .15s, background .15s; }
+  .size-opt b { display: block; font-size: 26px; line-height: 1; font-variant-numeric: tabular-nums; }
+  .size-opt span { display: block; font-size: 11.5px; color: var(--text-muted); margin-top: 5px; }
+  .size-opt.sel { border-color: var(--accent); background: var(--accent-soft); box-shadow: 0 0 0 1px var(--accent); }
+  .size-opt:active { transform: scale(.97); }
+  .size-est { margin: 12px 0 2px; padding: 12px 14px; border-radius: var(--radius-md); background: var(--surface-raised); font-size: 14px; font-weight: 600; line-height: 1.45; text-align: center; min-height: 64px; display: grid; place-items: center; }
+  .size-hero { text-align: center; padding: 4px 0 12px; }
+  .size-hero .ic { font-size: 40px; line-height: 1; margin-bottom: 8px; }
+  .size-hero h2 { margin: 0 0 6px; font-size: 20px; }
+  .size-hero p { margin: 0 auto; font-size: 14px; color: var(--text-muted); line-height: 1.5; max-width: 330px; }
+
   /* Guía de pronunciación */
   .guide-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin: 4px 0 6px; }
   .guide-tabs button { appearance: none; border: 1px solid var(--hairline); background: var(--surface-raised); color: var(--text-muted); border-radius: var(--radius-sm); padding: 9px 0; font-size: 15px; font-weight: 700; cursor: pointer; }
@@ -993,10 +1006,14 @@
   <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="setTitle">
     <h2 id="setTitle">Tu progreso</h2>
     <p class="sub">Tu racha, tus medallas y el recordatorio diario.</p>
+    <h3>Reto diario</h3>
+    <div class="size-opts" id="goalOpts"></div>
+    <div class="size-est" id="goalEst"></div>
+
     <h3>Racha y medallas</h3>
     <div class="streak-hero" id="streakHero"></div>
     <div class="palettes" id="palettes"></div>
-    <p class="note">Supera el reto de hoy (<b id="goalNote">30</b> aciertos en el día, en práctica libre o en el test) para sumar un día a tu racha. Si un día no lo superas, la racha vuelve a 0: las medallas que ya tienes se quedan, pero las nuevas se ganan con días seguidos contados desde 0 (la primera con 1 día, la segunda con 2 y después una cada 2 días: 4, 6, 8… hasta 18). Cada medalla trae su paleta, con su fondo y sus efectos. Toca una medalla para usar su paleta.</p>
+    <p class="note">Supera el reto de hoy (<b id="goalNote">10</b> aciertos en el día, en práctica libre o en el test) para sumar un día a tu racha. Si un día no lo superas, la racha vuelve a 0: las medallas que ya tienes se quedan, pero las nuevas se ganan con días seguidos contados desde 0 (la primera con 1 día, la segunda con 2 y después una cada 2 días: 4, 6, 8… hasta 18). Cada medalla trae su paleta, con su fondo y sus efectos. Toca una medalla para usar su paleta.</p>
 
     <div id="remSection" hidden>
       <h3>Recordatorio diario</h3>
@@ -1010,6 +1027,19 @@
     <h3>Ayuda</h3>
     <div class="row" style="margin-top:0"><button class="pill-btn ghost" id="tourAgain">Ver el tutorial otra vez</button></div>
     <div class="row"><button class="pill-btn" id="closeSettings">Cerrar</button></div>
+  </div>
+</div>
+
+<div class="sheet-backdrop" id="goalSheet">
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="goalTitle">
+    <div class="size-hero">
+      <div class="ic">🎯</div>
+      <h2 id="goalTitle">¿Cuántos kana quieres acertar al día?</h2>
+      <p>Será tu reto diario: superarlo suma un día a tu racha 🔥. Puedes cambiarlo cuando quieras tocando 🔥.</p>
+    </div>
+    <div class="size-opts" id="goalOptsFirst"></div>
+    <div class="size-est" id="goalEstFirst"></div>
+    <div class="row" style="margin-top:14px"><button class="pill-btn" id="goalGo">¡Empezar!</button></div>
   </div>
 </div>
 
@@ -1050,7 +1080,7 @@
       <span><b id="introPalName">Nueva paleta: Shiro 白</b><span>La de siempre, con los blancos y los negros intercambiados.</span></span>
     </div>
     <ul class="intro-list">
-      <li><span class="ic">📅</span><span><b>Para seguir la racha</b>, supera cada día el reto de hoy: <b id="introGoal">30</b> aciertos, en práctica libre o en el test. Cada día seguido suma uno.</span></li>
+      <li><span class="ic">📅</span><span><b>Para seguir la racha</b>, supera cada día el reto de hoy: <b id="introGoal">10</b> aciertos, en práctica libre o en el test. Cada día seguido suma uno.</span></li>
       <li><span class="ic">↺</span><span><b>Si un día no lo superas</b>, la racha vuelve a 0. Las medallas y paletas que ya tienes se quedan, pero para las nuevas tendrás que volver a sumar días seguidos desde 0.</span></li>
       <li><span class="ic">🎨</span><span><b>Cada 2 días seguidos</b> ganas una medalla con una paleta nueva (colores, fondo y efectos): con 2 días, 4, 6, 8… hasta la última, a los 18 días.</span></li>
       <li><span class="ic">⚙︎</span><span><b>Para cambiar de paleta</b>, toca el contador 🔥 de arriba a la derecha y elige una medalla.</span></li>
@@ -1332,7 +1362,9 @@
 
   // ================== RACHA, MEDALLAS, RECORDATORIO, GUÍA Y TUTORIAL ==================
   // Mismo sistema que KanaMe Kanji, con datos propios (claves «kaname-kana.*»: las dos apps comparten dominio).
-  var DAILY_GOAL = 30;                        // aciertos al día para superar el reto
+  var GOAL_KEY = "kaname-kana.goal.v1";       // aciertos al día para superar el reto: 5, 10 o 20
+  var GOALS = [[5, "Tranquilo", "Un momento cada día: ideal para no perder la costumbre."], [10, "Constante", "Unos minutos al día: buen ritmo para fijar los kana."], [20, "Intensivo", "Para avanzar rápido: en pocas semanas leerás hiragana y katakana con soltura."]];
+  var DAILY_GOAL = [5, 10, 20].indexOf(+lsGet(GOAL_KEY)) >= 0 ? +lsGet(GOAL_KEY) : 10;
   var STREAK_KEY = "kaname-kana.streak.v1";   // { cur, best, last: "AAAA-MM-DD" }
   var TODAY_KEY = "kaname-kana.today.v1";     // { date, n }
   var PALETTE_KEY = "kaname-kana.palette.v1";
@@ -1382,6 +1414,34 @@
     var bar = el("span", "bar"), fill = el("i"); fill.style.width = (done ? 100 : n / DAILY_GOAL * 100) + "%"; bar.appendChild(fill); tx.appendChild(bar);
     b.appendChild(tx);
     b.appendChild(el("span", "right", done ? "✓ " + DAILY_GOAL + "/" + DAILY_GOAL : n + "/" + DAILY_GOAL));
+  }
+  function renderGoalPicker(boxId, estId, selected, onPick) {
+    var box = $(boxId); box.innerHTML = "";
+    GOALS.forEach(function (g) {
+      var b = el("button", "size-opt" + (g[0] === selected ? " sel" : ""));
+      b.appendChild(el("b", null, String(g[0]))); b.appendChild(el("span", null, g[1]));
+      b.setAttribute("aria-pressed", g[0] === selected ? "true" : "false");
+      b.onclick = function () { onPick(g[0]); };
+      box.appendChild(b);
+    });
+    var g = GOALS.filter(function (x) { return x[0] === selected; })[0];
+    $(estId).textContent = "🎯 " + selected + " aciertos al día · " + g[2];
+  }
+  function setGoal(n) {
+    DAILY_GOAL = n; lsSet(GOAL_KEY, String(n));
+    $("goalNote").textContent = n; $("introGoal").textContent = n;
+    if (today.date === dayStr() && today.n >= n) checkDayComplete();
+    renderToday();
+  }
+  function renderGoalSettings() { renderGoalPicker("goalOpts", "goalEst", DAILY_GOAL, function (n) { setGoal(n); track("reto-" + n); renderGoalSettings(); }); }
+  function maybeAskGoal(done) {
+    if (lsGet(GOAL_KEY)) return false;
+    var pick = DAILY_GOAL;
+    var draw = function () { renderGoalPicker("goalOptsFirst", "goalEstFirst", pick, function (n) { pick = n; draw(); }); };
+    draw(); answer.blur();
+    $("goalSheet").classList.add("open");
+    $("goalGo").onclick = function () { $("goalSheet").classList.remove("open"); setGoal(pick); track("reto-elegido-" + pick); if (done) done(); };
+    return true;
   }
   function renderStreak() {
     var cur = currentStreak();
@@ -1485,7 +1545,7 @@
       box.appendChild(b);
     });
   }
-  function openSettings() { renderStreakSheet(); renderReminder(); $("settings").classList.add("open"); answer.blur(); }
+  function openSettings() { renderGoalSettings(); renderStreakSheet(); renderReminder(); $("settings").classList.add("open"); answer.blur(); }
   $("streakBtn").onclick = openSettings;
   $("closeSettings").onclick = function () { $("settings").classList.remove("open"); };
   $("settings").addEventListener("click", function (e) { if (e.target === this) this.classList.remove("open"); });
@@ -1556,7 +1616,7 @@
       : on ? "Te avisaremos a las " + remTime() + " si aún no has superado el reto del día."
       : Notification.permission === "denied" ? "Notificaciones bloqueadas en los ajustes del móvil." : "Desactivado";
   }
-  function anySheetOpen() { return tour || ["sheet", "settings", "guideSheet", "introSheet", "remSheet"].some(function (id) { return $(id).classList.contains("open"); }) || !!document.querySelector(".medal-reveal.open"); }
+  function anySheetOpen() { return tour || ["sheet", "settings", "guideSheet", "introSheet", "remSheet", "goalSheet"].some(function (id) { return $(id).classList.contains("open"); }) || !!document.querySelector(".medal-reveal.open"); }
   function maybeAskReminder() {
     if (!pushSupported() || rem.state || Notification.permission === "denied") return;
     setTimeout(function () {
@@ -1723,7 +1783,9 @@
   setInterval(function () { if (today.date !== dayStr()) { renderToday(); renderStreak(); } }, 60000);
   syncReminder();
   var afterTour = function () { if (!maybeShowStreakIntro()) maybeAskReminder(); };
-  if (!lsGet(TOUR_KEY)) setTimeout(function () { startTour(afterTour); }, 500); else afterTour();
+  $("goalNote").textContent = DAILY_GOAL; $("introGoal").textContent = DAILY_GOAL;
+  var tourThen = function () { if (!lsGet(TOUR_KEY)) setTimeout(function () { startTour(afterTour); }, 300); else afterTour(); };
+  if (!maybeAskGoal(tourThen)) tourThen();
 
   if ("serviceWorker" in navigator && location.protocol === "https:") {
     navigator.serviceWorker.register("sw.js").catch(function () {});
