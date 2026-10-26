@@ -1707,7 +1707,7 @@
   var ROWS_TEN = [["が", "ぎ", "ぐ", "げ", "ご"], ["ざ", "じ", "ず", "ぜ", "ぞ"], ["だ", "ぢ", "づ", "で", "ど"], ["ば", "び", "ぶ", "べ", "ぼ"], ["ぱ", "ぴ", "ぷ", "ぺ", "ぽ"]];
   var ROWS_COMBO = [["きゃ", "きゅ", "きょ"], ["しゃ", "しゅ", "しょ"], ["ちゃ", "ちゅ", "ちょ"], ["にゃ", "にゅ", "にょ"], ["ひゃ", "ひゅ", "ひょ"], ["みゃ", "みゅ", "みょ"], ["りゃ", "りゅ", "りょ"],
     ["ぎゃ", "ぎゅ", "ぎょ"], ["じゃ", "じゅ", "じょ"], ["びゃ", "びゅ", "びょ"], ["ぴゃ", "ぴゅ", "ぴょ"]];
-  var EXTRA_ROMAJI = { "ぢ": "ji (dji)", "づ": "zu (dzu)" };
+  var EXTRA_ROMAJI = { "ぢ": "ji", "づ": "zu" };
   var SPECIAL = { "し": 1, "ち": 1, "つ": 1, "ふ": 1, "ん": 1, "を": 1, "じ": 1, "ず": 1, "ら": 1, "り": 1, "る": 1, "れ": 1, "ろ": 1 };
   var TIPS = [
     ["あえいおう", "<b>Vocales</b>: como en español. La <b>u</b> se dice sin redondear los labios y, entre consonantes como k, s o t, casi no se oye: です suena «des»."],
@@ -1716,6 +1716,7 @@
     ["ふ", "<b>ふ fu</b>: soplando entre los labios casi cerrados, sin tocar los dientes. Está entre una f y una j muy suave."],
     ["はひへほ", "<b>H</b>: aspirada y suave, como la h inglesa de «hello». Más suave que la j española."],
     ["じ・ず", "<b>じ ji</b> es una «y» fuerte o la j inglesa de «jeans», no la j española. <b>ず zu</b> es una z sonora, como «ds»."],
+    ["ぢ・づ", "<b>ぢ</b> y <b>づ</b> suenan igual que じ (ji) y ず (zu). Casi no se usan: solo cuando se repite la sílaba (ちぢむ, つづく) o al unir palabras (はな + ち → はなぢ)."],
     ["が・ぎ", "<b>G</b>: siempre como en «gato»: ぎ suena «gui» y げ suena «gue»."],
     ["ん", "<b>ん n</b>: una n que vale una sílaba entera. Antes de p, b o m suena m: さんぽ «sampo»."],
     ["を・は・へ", "<b>を</b> se lee «o». Como partícula, <b>は</b> se lee «wa» y <b>へ</b> se lee «e»."],
@@ -1723,10 +1724,28 @@
     ["ー・おう", "<b>Vocales largas</b>: duran el doble. En katakana se marcan con ー (コーヒー «kōhī»); en hiragana, por ejemplo, con おう o えい."],
     ["きゃ", "<b>Combinados</b>: son una sola sílaba rápida, no dos: きゃ es «kya» (casi «kia» de un golpe)."]
   ];
-  var canSpeak = "speechSynthesis" in window && typeof SpeechSynthesisUtterance !== "undefined";
+  // Pronunciación: grabaciones propias en audio/kana/<romaji>.mp3 (voz sintetizada con Open JTalk), que suenan
+  // en cualquier navegador. La voz del sistema (speechSynthesis) solo se usa si falla el audio: en algunos
+  // navegadores (p. ej. Samsung Internet) no hay voz japonesa instalada y no suena nada.
+  var canSpeak = true;
+  var SAME_SOUND = { "ぢ": "ji", "づ": "zu" };
+  var voice = new Audio(); voice.preload = "auto";
+  function toHiragana(s) { return s.replace(/[\u30A1-\u30F6]/g, function (c) { return String.fromCharCode(c.charCodeAt(0) - 0x60); }); }
+  function ttsFallback(txt) {
+    try {
+      if (!("speechSynthesis" in window)) return;
+      var u = new SpeechSynthesisUtterance(txt); u.lang = "ja-JP"; u.rate = .8;
+      var v = (speechSynthesis.getVoices() || []).filter(function (x) { return /^ja/i.test(x.lang); })[0]; if (v) u.voice = v;
+      speechSynthesis.speak(u);
+    } catch (e) {}
+  }
   function speak(txt) {
-    if (!canSpeak) return;
-    try { speechSynthesis.cancel(); var u = new SpeechSynthesisUtterance(txt); u.lang = "ja-JP"; u.rate = .8; speechSynthesis.speak(u); } catch (e) {}
+    var h = toHiragana(txt), r = SAME_SOUND[h] || BASE[h] || COMBO[h];
+    if (!r) { ttsFallback(txt); return; }
+    try {
+      voice.pause(); voice.src = "audio/kana/" + r + ".mp3"; voice.currentTime = 0;
+      var p = voice.play(); if (p && p.catch) p.catch(function () { ttsFallback(txt); });
+    } catch (e) { ttsFallback(txt); }
   }
   function romajiOf(h) { return EXTRA_ROMAJI[h] || BASE[h] || COMBO[h] || ""; }
   // Columnas en el orden de las vocales en español (a, e, i, o, u) en vez del japonés (a, i, u, e, o)

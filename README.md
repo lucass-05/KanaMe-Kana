@@ -98,3 +98,7 @@ python3 -m http.server 8000   # y abre http://localhost:8000
 Puedes usar y estudiar KanaMe Kana libremente. Si copias o modificas el código y lo distribuyes o lo publicas como web o app, debes mantener el aviso de autoría y publicar tu código completo bajo la misma licencia.
 
 <div align="center"><sub>Hecho con 墨 y paciencia · がんばって！</sub></div>
+
+---
+
+Las pronunciaciones de la guía (`audio/kana/`) están generadas con [Open JTalk](https://open-jtalk.sourceforge.net/) (licencia BSD modificada) a través de [pyopenjtalk](https://github.com/r9y9/pyopenjtalk).
