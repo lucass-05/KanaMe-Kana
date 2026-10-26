@@ -27,6 +27,8 @@ Sin cuentas · Sin anuncios · Funciona sin conexión
 2. **Corrige.** Si aciertas, pasa al siguiente. Si fallas, ves la respuesta correcta antes de continuar.
 3. **Examínate.** El **modo test** te pregunta todos los kana elegidos una sola vez, en orden aleatorio, y al final te da una nota sobre 10 con la lista de fallos. Con un toque repasas solo esos.
 
+4. **Repasa tus fallos.** La app recuerda los kana que fallas. *Repasar fallos* te los pregunta empezando por el que más fallas; cada acierto le resta un fallo y los que vuelves a fallar se repiten enseguida.
+
 ## Elige qué practicar
 
 | Opción | Qué incluye |

@@ -628,6 +628,9 @@
   .send:active, .pill-btn:active { transform: scale(.96); }
 
   .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .actions .wide { grid-column: 1 / -1; }
+  .pill-btn small { font-weight: 600; opacity: .75; margin-left: 4px; }
+  .pill-btn:disabled { opacity: .45; }
   .pill-btn { appearance: none; border: 1px solid var(--accent); background: var(--accent-soft); color: var(--text); font-size: 14px; font-weight: 600; padding: 12px 18px; border-radius: 999px; cursor: pointer; }
   .pill-btn.ghost { border-color: var(--hairline); background: transparent; color: var(--text-muted); }
 
@@ -984,6 +987,7 @@
   <div class="actions">
     <button class="pill-btn" id="testBtn">Modo test</button>
     <button class="pill-btn ghost" id="resetBtn">Empezar de nuevo</button>
+    <button class="pill-btn ghost wide" id="reviewBtn">Repasar fallos</button>
   </div>
 </div>
 
@@ -1161,6 +1165,31 @@
   // ------------------ ESTADO ------------------
   var pool = {}, current = "", correct = 0, wrong = 0, locked = false;
   var testMode = false, testList = [], testIndex = 0, failed = [];
+  // Modo repasar: los kana que más fallas, del que más al que menos.
+  // Por kana: m = fallos totales, d = fallos pendientes (cada fallo suma 1, cada acierto resta 1).
+  var reviewMode = false, STATS_KEY = "kaname-kana.stats.v1", kstats = {};
+  try { kstats = JSON.parse(localStorage.getItem(STATS_KEY) || "{}") || {}; } catch (e) { kstats = {}; }
+  function saveKStats() { try { localStorage.setItem(STATS_KEY, JSON.stringify(kstats)); } catch (e) {} }
+  function recordAnswer(k, ok) {
+    var st = kstats[k] || { m: 0, d: 0 };
+    if (ok) st.d = Math.max(0, st.d - 1); else { st.m++; st.d++; }
+    if (!st.m && !st.d) delete kstats[k]; else kstats[k] = st;
+    saveKStats();
+  }
+  function allPool() { return buildPool({ hira: true, kata: true, combo: true, noTenten: false }); }
+  // Kana pendientes de repaso de los alfabetos elegidos, del más fallado al menos
+  function reviewList() {
+    var all = allPool();
+    return Object.keys(kstats).filter(function (k) {
+      if (!all[k] || !(kstats[k].d > 0)) return false;
+      return /[\u30A0-\u30FF]/.test(k) ? prefs.kata : prefs.hira;
+    }).sort(function (a, b) { return (kstats[b].d - kstats[a].d) || (kstats[b].m - kstats[a].m); });
+  }
+  function renderReviewBtn() {
+    var n = reviewList().length, b = $("reviewBtn");
+    b.innerHTML = reviewMode ? "Salir del repaso" : "Repasar fallos" + (n ? "<small>· " + n + (n === 1 ? " kana" : " kana") + "</small>" : "");
+    b.disabled = testMode && !reviewMode;
+  }
 
   var $ = function (id) { return document.getElementById(id); };
   var answer = $("answer"), card = $("card"), kana = $("kana"), feedback = $("feedback");
@@ -1199,6 +1228,7 @@
       box.appendChild(b);
     });
     ["combo", "noTenten"].forEach(function (id) { $(id).checked = prefs[id]; $(id).disabled = testMode; });
+    renderReviewBtn();
   }
 
   var ICON_ON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/></svg>';
@@ -1217,7 +1247,7 @@
   function updateStats() { $("okCount").textContent = correct; $("koCount").textContent = wrong; }
   function updateProgress() {
     $("progressBar").style.width = testMode ? ((testIndex / testList.length) * 100) + "%" : "0%";
-    $("modeLabel").textContent = testMode ? "Test · " + Math.min(testIndex + 1, testList.length) + " de " + testList.length : "Práctica libre";
+    $("modeLabel").textContent = testMode ? (reviewMode ? "Repaso de fallos · " : "Test · ") + Math.min(testIndex + 1, testList.length) + " de " + testList.length : "Práctica libre";
   }
 
   // ------------------ LÓGICA ------------------
@@ -1262,6 +1292,9 @@
     locked = true;
     var romaji = pool[current];
     var ok = isCorrect(ans, romaji);
+    recordAnswer(current, ok);
+    // En el repaso, un fallo vuelve a salir unas tarjetas más adelante
+    if (!ok && reviewMode) testList.splice(Math.min(testList.length, testIndex + 4), 0, current);
 
     if (ok) {
       correct++;
@@ -1277,13 +1310,13 @@
       feedback.querySelector(".ans").textContent = romaji;
     }
     play(ok);
-    updateStats();
+    updateStats(); renderReviewBtn();
 
     var delay = ok ? 600 : 1300;
     if (testMode) {
       testIndex++;
       updateProgress();
-      if (testIndex >= testList.length) setTimeout(finishTest, delay);
+      if (testIndex >= testList.length) setTimeout(reviewMode ? finishReview : finishTest, delay);
       else { current = testList[testIndex]; setTimeout(showChar, delay); }
     } else {
       setTimeout(randomChar, delay);
@@ -1297,14 +1330,36 @@
     testIndex = 0; correct = 0; wrong = 0; failed = [];
     testMode = true;
     renderSets();
-    $("testBtn").textContent = "Salir del test";
+    $("testBtn").textContent = "Salir del test"; renderReviewBtn();
     current = testList[0];
     updateStats(); showChar();
     answer.focus();
   }
 
+  function startReview() {
+    var list = reviewList();
+    if (!list.length) { toast(Object.keys(kstats).length ? "¡No tienes fallos pendientes! Sigue practicando." : "Aún no tienes fallos que repasar. Practica un poco primero."); return; }
+    pool = allPool();
+    testList = list; testIndex = 0; correct = 0; wrong = 0; failed = [];
+    testMode = true; reviewMode = true;
+    renderSets(); renderReviewBtn();
+    $("testBtn").textContent = "Modo test"; $("testBtn").disabled = true;
+    current = testList[0];
+    updateStats(); showChar();
+    track("repaso-empezado");
+    answer.focus();
+  }
+  function finishReview() {
+    var left = reviewList().length;
+    endTest();
+    track("repaso-terminado");
+    toast(left ? "Repaso terminado · " + correct + " aciertos. Te quedan " + left + " kana por afianzar." : "🎉 Repaso terminado: ya no te queda ningún fallo pendiente.");
+    randomChar();
+  }
   function endTest() {
-    testMode = false;
+    testMode = false; reviewMode = false;
+    $("testBtn").disabled = false;
+    renderReviewBtn();
     $("testBtn").textContent = "Modo test";
     renderSets();
     updateProgress();
@@ -1352,6 +1407,7 @@
   // ------------------ EVENTOS ------------------
   $("answerForm").addEventListener("submit", function (e) { e.preventDefault(); checkAnswer(); answer.focus(); });
   $("testBtn").addEventListener("click", function () { if (testMode) resetQuiz(); else startTest(); });
+  $("reviewBtn").addEventListener("click", function () { if (reviewMode) resetQuiz(); else startReview(); });
   $("resetBtn").addEventListener("click", resetQuiz);
   $("closeResult").addEventListener("click", function () { closeSheet(); resetQuiz(); });
   $("sheet").addEventListener("click", function (e) { if (e.target === this) { closeSheet(); resetQuiz(); } });
@@ -1727,6 +1783,7 @@
       { el: "sets", t: "Hiragana y katakana", h: "Elige qué practicar: <b>あ hiragana</b>, <b>ア katakana</b> o los dos. Con los interruptores de debajo añades los <b>combinados</b> o quitas los kana con tenten." },
       { el: "todayBtn", t: "Reto de hoy", h: "Cada día, acierta <b>" + DAILY_GOAL + " kana</b> (en práctica libre o en el test) para sumar un día a tu <b>racha 🔥</b>." },
       { el: "testBtn", t: "Modo test", h: "Te pregunta todos los kana elegidos una sola vez y al final te da una <b>nota sobre 10</b> con tus fallos, para repasarlos." },
+      { el: "reviewBtn", t: "Repasar fallos", h: "La app recuerda los kana que fallas. Aquí los repasas <b>empezando por el que más fallas</b>; cada acierto le resta un fallo, y los que vuelvas a fallar se repiten enseguida." },
       { el: "guideBtn", t: "Guía de pronunciación", h: "La tabla de todos los kana con su romaji, por separado para <b>hiragana</b> y <b>katakana</b>, y trucos para pronunciarlos bien." + (canSpeak ? " Toca un kana para oírlo." : "") },
       { el: "streakBtn", t: "Racha y medallas", h: "Tu racha de días seguidos. Tócala para ver tus <b>medallas</b>, cambiar de <b>paleta de colores</b> y activar el <b>recordatorio diario</b>. ¡A practicar!" }
     ];
@@ -1779,7 +1836,7 @@
 
   // Inicio
   renderSets(); renderSound(); updateStats(); randomChar();
-  renderToday(); renderStreak();
+  renderToday(); renderStreak(); renderReviewBtn();
   setInterval(function () { if (today.date !== dayStr()) { renderToday(); renderStreak(); } }, 60000);
   syncReminder();
   var afterTour = function () { if (!maybeShowStreakIntro()) maybeAskReminder(); };
