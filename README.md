@@ -40,6 +40,13 @@ Puedes combinarlas como quieras, y la app recuerda tu elección.
 
 Se aceptan tanto la romanización Hepburn como las variantes más habituales: *shi* o *si*, *tsu* o *tu*, *fu* o *hu*, *wo* u *o*…
 
+## Racha, medallas y guía
+
+- **Reto de hoy.** Acierta 30 kana al día (en práctica libre o en el test) para sumar un día a tu **racha 🔥**.
+- **Medallas y paletas.** El primer día ganas la medalla 白 Shiro, el segundo 桜 Sakura y después una cada 2 días hasta 金 Kin (18 días). Cada medalla trae su paleta de colores, con fondo y efectos propios.
+- **Guía de pronunciación.** La tabla de todos los kana con su romaji, por separado para hiragana y katakana, con trucos de pronunciación para hispanohablantes. Toca un kana para oírlo.
+- **Recordatorio diario.** Un aviso a la hora que elijas si aún no has superado el reto del día.
+
 ## Por qué funciona
 
 - **Recuerdo activo.** Escribir la lectura de memoria fija el kana mucho mejor que mirar una tabla.

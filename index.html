@@ -24,6 +24,482 @@
 <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon-180x180.png">
 <link rel="manifest" href="site.webmanifest">
 
+<!-- Paletas (se desbloquean con la racha). Colores inspirados en los colores tradicionales japoneses (日本の伝統色).
+     Cada paleta cambia los colores de toda la app y añade un fondo propio: un kanji grande en relieve, un motivo
+     tradicional y efectos suaves. Se aplica antes de pintar para evitar parpadeos. -->
+<script>
+(function () {
+  function svg(body, w, h) {
+    return 'url("data:image/svg+xml;utf8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="' + w + '" height="' + h + '" viewBox="0 0 ' + w + ' ' + h + '">' + body + '</svg>') + '")';
+  }
+  // Formas (24×24) para pétalos, hojas, estrellas… C = color
+  var PETAL_D = "M12 23C6 19 3.5 12 6 6.5 7.6 3 10 1.8 10.6 1.5L12 4.2 13.4 1.5C14 1.8 16.4 3 18 6.5 20.5 12 18 19 12 23Z";
+  var SMALL_PETAL = "M12 12C9 10.5 8 7 9.3 4.3 10 3 11 2.5 11.3 2.3L12 3.6 12.7 2.3C13 2.5 14 3 14.7 4.3 16 7 15 10.5 12 12Z";
+  function blossom(fill, center) {
+    var s = "";
+    for (var k = 0; k < 5; k++) s += '<path d="' + SMALL_PETAL + '" fill="' + fill + '" transform="rotate(' + (72 * k) + ' 12 12)"/>';
+    return s + '<circle cx="12" cy="12" r="1.7" fill="' + center + '"/>';
+  }
+  var SHAPES = {
+    petal: function (c) { return '<path d="' + PETAL_D + '" fill="' + c + '"/><path d="M12 22V9" stroke="#fff" stroke-opacity=".35" stroke-width=".8"/>'; },
+    blossom: function (c) { return blossom(c, "#e0607e"); },
+    leaf: function (c) { return '<path d="M12 1L13.6 6.5 18 4 16.6 9 22.5 8.5 18.5 12.5 20.5 14 14 14.5 13 17 12.6 23H11.4L11 17 10 14.5 3.5 14 5.5 12.5 1.5 8.5 7.4 9 6 4 10.4 6.5Z" fill="' + c + '"/>'; },
+    tea: function (c) { return '<ellipse cx="12" cy="12" rx="5.2" ry="10.5" fill="' + c + '"/><path d="M12 3v18" stroke="#000" stroke-opacity=".18" stroke-width=".8"/>'; },
+    star: function (c) { return '<path d="M12 0C12.8 8 16 11.2 24 12 16 12.8 12.8 16 12 24 11.2 16 8 12.8 0 12 8 11.2 11.2 8 12 0Z" fill="' + c + '"/>'; },
+    dot: function (c) { return '<defs><radialGradient id="g"><stop offset="0" stop-color="' + c + '"/><stop offset=".35" stop-color="' + c + '" stop-opacity=".8"/><stop offset="1" stop-color="' + c + '" stop-opacity="0"/></radialGradient></defs><circle cx="12" cy="12" r="12" fill="url(#g)"/>'; },
+    bubble: function (c) { return '<circle cx="12" cy="12" r="10" fill="none" stroke="' + c + '" stroke-width="1.6"/><circle cx="8.5" cy="8" r="2" fill="' + c + '" fill-opacity=".6"/>'; },
+    drop: function (c) { return '<path d="M12 1C12 1 4 11 4 16a8 8 0 0 0 16 0C20 11 12 1 12 1Z" fill="' + c + '"/>'; },
+    wis: function (c) { return '<path d="M12 3C7 3 4 7 5 11 6.4 16 10 20 12 22 14 20 17.6 16 19 11 20 7 17 3 12 3Z" fill="' + c + '"/>'; },
+    seal: function (c) { return '<circle cx="12" cy="12" r="9" fill="none" stroke="' + c + '" stroke-width="2.4"/><circle cx="12" cy="12" r="3" fill="' + c + '"/>'; }
+  };
+  window.KANAME_SHAPE = function (name, color) { return svg(SHAPES[name](color), 24, 24); };
+
+  // Motivos de fondo (patrones que se repiten)
+  function seigaiha(stroke, fill) { // olas 青海波
+    var s = "", cs = [[0, 0], [40, 0], [20, 10], [0, 20], [40, 20]];
+    cs.forEach(function (c) {
+      s += '<circle cx="' + c[0] + '" cy="' + c[1] + '" r="19.5" fill="' + fill + '" stroke="' + stroke + '"/>';
+      [14.5, 9.5, 4.5].forEach(function (r) { s += '<circle cx="' + c[0] + '" cy="' + c[1] + '" r="' + r + '" fill="none" stroke="' + stroke + '"/>'; });
+    });
+    return svg(s, 40, 20);
+  }
+  function sakuraRelief() { // flores de cerezo en relieve (luz arriba-izquierda, sombra abajo-derecha)
+    var spots = [[18, 22, 1.0, 10], [104, 14, 0.7, 40], [70, 70, 1.25, 20], [150, 92, 0.85, 55], [22, 120, 0.75, 5], [110, 150, 1.05, 30], [176, 168, 0.6, 15], [44, 182, 0.9, 62]];
+    var s = "";
+    spots.forEach(function (p) {
+      var g = function (dx, dy, fill, center) { return '<g transform="translate(' + (p[0] + dx) + ' ' + (p[1] + dy) + ') rotate(' + p[3] + ') scale(' + p[2] + ') translate(-12 -12)">' + blossom(fill, center) + '</g>'; };
+      s += g(1.1, 1.3, "#c97c92", "#c97c92").replace(/fill="#c97c92"/g, 'fill="#b9566f" fill-opacity=".16"');
+      s += g(-0.9, -0.9, "#ffffff", "#ffffff").replace(/fill="#ffffff"/g, 'fill="#ffffff" fill-opacity=".95"');
+      s += g(0, 0, "#f9dfe6", "#f2b9c8");
+    });
+    return svg(s, 200, 200);
+  }
+  function triGrid(stroke) { // red triangular (base del 麻の葉)
+    var h = 69.282;
+    var s = '<g stroke="' + stroke + '" stroke-width=".8" fill="none"><path d="M0 0H40M0 34.641H40M0 0L40 ' + h + 'M40 0L0 ' + h + '"/>' +
+      '<path d="M20 11.547V0M20 11.547L0 0M20 11.547L40 0M20 23.094V34.641M20 23.094L0 ' + h + 'M20 23.094L40 ' + h + '" stroke-opacity=".55"/></g>';
+    return svg(s, 40, h);
+  }
+  function bamboo(c) { // dos cañas de bambú en relieve
+    var s = '<g fill="none" stroke="' + c + '" stroke-linecap="round">';
+    [[22, 9], [52, 7]].forEach(function (b) {
+      s += '<path d="M' + b[0] + ' 0V800" stroke-width="' + b[1] + '"/>';
+      for (var y = 60 + b[0]; y < 800; y += 130) s += '<path d="M' + (b[0] - b[1]) + ' ' + y + 'H' + (b[0] + b[1]) + '" stroke-width="2.2"/>';
+    });
+    s += '<path d="M28 150q30 -6 60 18M58 330q30 -8 52 10M26 470q34 0 58 26M56 640q26 -10 50 6" stroke-width="5"/></g>';
+    return svg(s, 120, 800);
+  }
+  function wisteria() { // racimos de glicinia colgando
+    var s = "", cols = ["#c9b6ec", "#b39ce0", "#a088d6", "#8d73c8"];
+    [[14, 120], [44, 170], [76, 105], [108, 150]].forEach(function (cl, ci) {
+      for (var i = 0; i < 16; i++) {
+        var y = 6 + i * (cl[1] / 16), w = 9 - i * 0.42, x = cl[0] + Math.sin(i * 1.7 + ci) * 2.5;
+        s += '<ellipse cx="' + x + '" cy="' + y + '" rx="' + w + '" ry="' + (w * 0.62) + '" fill="' + cols[(i + ci) % 4] + '" fill-opacity="' + (0.55 - i * 0.022) + '"/>';
+      }
+      s += '<path d="M' + cl[0] + ' 0V8" stroke="#6b5a86" stroke-width="1.2"/>';
+    });
+    return svg(s, 124, 190);
+  }
+  function wave(c) { return svg('<path d="M0 30 Q50 6 100 30 T200 30 T300 30 T400 30 V60 H0Z" fill="' + c + '"/>', 400, 60); }
+
+  // ===== Medallas (una por paleta), con aspecto de orfebrería real: metal con relieve iluminado,
+  //       esmalte de color en el campo (guilloché en las altas) y adornos de metal que crecen con cada medalla =====
+  function star(n, ro, ri, cx, cy, rot) {
+    var p = [];
+    for (var i = 0; i < n * 2; i++) { var r = i % 2 ? ri : ro, a = Math.PI * i / n - Math.PI / 2 + (rot || 0); p.push((cx + r * Math.cos(a)).toFixed(2) + " " + (cy + r * Math.sin(a)).toFixed(2)); }
+    return "M" + p.join("L") + "Z";
+  }
+  function f(n) { return (+n).toFixed(2); }
+  function pol(r, a) { return [32 + r * Math.cos(a), 32 + r * Math.sin(a)]; }
+  var BIG_PETAL = "M32 32C24 28 21.4 18.6 24.8 11.4 26.7 7.9 29.3 6.6 30.1 6.1L32 9.6 33.9 6.1C34.7 6.6 37.3 7.9 39.2 11.4 42.6 18.6 40 28 32 32Z";
+  var METAL = {
+    gold:   ["#fff6d2", "#f0cd6e", "#c5932f", "#8a611a", "#e9c463", "#5e400d"],
+    silver: ["#ffffff", "#e3e6ea", "#a9afb8", "#6e747e", "#d5d9df", "#454a52"],
+    rose:   ["#fff0ea", "#f0bfb2", "#c4877a", "#8a5248", "#e8b0a2", "#5a3029"],
+    bronze: ["#f6e3bc", "#d4a867", "#9c6a33", "#62401b", "#c99a5b", "#3e2810"],
+    copper: ["#ffe0cc", "#eea47a", "#bb6439", "#7a3518", "#e08a5a", "#4a1d0a"],
+    gun:    ["#d8dbe0", "#8a8f98", "#4c5058", "#25272c", "#777c85", "#121315"],
+    dark:   ["#f3f5fa", "#b8bfcc", "#7a8293", "#3e4454", "#a7aebd", "#232733"]
+  };
+  function grad(id, c) {
+    return '<linearGradient id="' + id + '" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="' + c[0] + '"/><stop offset=".22" stop-color="' + c[1] + '"/><stop offset=".45" stop-color="' + c[2] + '"/>' +
+      '<stop offset=".62" stop-color="' + c[3] + '"/><stop offset=".8" stop-color="' + c[4] + '"/><stop offset="1" stop-color="' + c[5] + '"/></linearGradient>';
+  }
+  // Relieve: luz difusa + brillo especular desde arriba a la izquierda, grano de metal cepillado y sombra proyectada
+  function bevel(id, blur, scale, opts) {
+    opts = opts || {};
+    var s = '<filter id="' + id + '" x="-25%" y="-25%" width="150%" height="150%" color-interpolation-filters="sRGB">' +
+      '<feGaussianBlur in="SourceAlpha" stdDeviation="' + blur + '" result="b"/>' +
+      '<feDiffuseLighting in="b" surfaceScale="' + scale + '" diffuseConstant="1.18" lighting-color="#fff" result="d"><feDistantLight azimuth="235" elevation="50"/></feDiffuseLighting>' +
+      '<feSpecularLighting in="b" surfaceScale="' + scale + '" specularConstant="1.25" specularExponent="24" lighting-color="#fff" result="s"><feDistantLight azimuth="235" elevation="36"/></feSpecularLighting>' +
+      '<feComposite in="SourceGraphic" in2="d" operator="arithmetic" k1="1.3" result="lit"/>';
+    var last = "lit";
+    if (opts.grain) {
+      s += '<feTurbulence type="fractalNoise" baseFrequency="' + opts.grain + '" numOctaves="2" seed="7" result="n"/>' +
+        '<feColorMatrix in="n" type="matrix" values=".33 .33 .33 0 0 .33 .33 .33 0 0 .33 .33 .33 0 0 0 0 0 0 1" result="ng"/>' +
+        '<feComposite in="lit" in2="ng" operator="arithmetic" k1=".42" k2=".8" result="lg"/>';
+      last = "lg";
+    }
+    s += '<feComposite in="s" in2="SourceAlpha" operator="in" result="s2"/>' +
+      '<feComposite in="' + last + '" in2="s2" operator="arithmetic" k2="1" k3=".85" result="o"/>' +
+      '<feComposite in="o" in2="SourceAlpha" operator="in" result="o2"/>';
+    if (opts.shadow) s += '<feGaussianBlur in="SourceAlpha" stdDeviation="' + opts.shadow + '"/><feOffset dx="' + (opts.shadow * .9) + '" dy="' + (opts.shadow * 1.3) + '" result="sh0"/>' +
+      '<feFlood flood-color="#000" flood-opacity=".55"/><feComposite in2="sh0" operator="in" result="sh"/><feMerge><feMergeNode in="sh"/><feMergeNode in="o2"/></feMerge>';
+    return s + '</filter>';
+  }
+  var CIRCLE = "M32 4a28 28 0 1 1 0 56a28 28 0 1 1 0-56Z";
+  var MEDALS = {
+    sumi: { metal: "gun", shape: "M32 4C32 4 11 28 11 40a21 21 0 0 0 42 0C53 28 32 4 32 4Z", field: .76, fieldDy: 3, enamel: "#141417",
+      em: '<circle cx="32" cy="40" r="4"/><g fill="none" stroke-width="1.5"><circle cx="32" cy="40" r="8.5"/><circle cx="32" cy="40" r="13"/></g>' },
+    shiro: { metal: "silver", shape: CIRCLE, field: .8, enamel: "#f1eee6",
+      enamelExtra: '<rect x="22" y="22" width="20" height="20" rx="2" fill="#b8392a"/>',
+      em: '<rect x="21" y="21" width="22" height="22" rx="3" fill="none" stroke-width="2.2"/><path d="M26 27.5h12M26 32h12M26 36.5h12M32 25v14" fill="none" stroke-width="1.6"/>' },
+    sakura: { metal: "rose", petals: true, field: .74, enamel: "#f29bb6",
+      em: '<g fill="none" stroke-width="1.1" stroke-linecap="round"><path d="M32 27V16M36.8 30.5l10.4-3.4M35 36l6.4 8.9M29 36l-6.4 8.9M27.2 30.5l-10.4-3.4"/></g><circle cx="32" cy="32" r="4.6"/>' +
+        '<g><circle cx="32" cy="15.5" r="1.5"/><circle cx="47.7" cy="27" r="1.5"/><circle cx="41.7" cy="45.3" r="1.5"/><circle cx="22.3" cy="45.3" r="1.5"/><circle cx="16.3" cy="27" r="1.5"/></g>' },
+    matcha: { metal: "bronze", shape: "M32 3C47 13 54 30 47 46 43 55 32 61 32 61S21 55 17 46C10 30 17 13 32 3Z", field: .74, enamel: "#7fae3e",
+      em: '<path d="M32 11V56" fill="none" stroke-width="2"/><path d="M32 22l-7-5M32 22l7-5M32 31l-9-6M32 31l9-6M32 40l-8.5-5.5M32 40l8.5-5.5M32 48l-6-4M32 48l6-4" fill="none" stroke-width="1.3" stroke-linecap="round"/>' },
+    ai: { metal: "silver", shape: "M32 3L57 13V32C57 47 46 57 32 61 18 57 7 47 7 32V13Z", field: .8, enamel: "#1d3b8c", guil: true,
+      em: '<g fill="none" stroke-width="1.5"><path d="M14 48a9 9 0 0 1 18 0M32 48a9 9 0 0 1 18 0M23 39a9 9 0 0 1 18 0M18.5 48a4.5 4.5 0 0 1 9 0M36.5 48a4.5 4.5 0 0 1 9 0M27.5 39a4.5 4.5 0 0 1 9 0M14 30a9 9 0 0 1 18 0M32 30a9 9 0 0 1 18 0M18.5 30a4.5 4.5 0 0 1 9 0M36.5 30a4.5 4.5 0 0 1 9 0"/></g>' },
+    yamabuki: { metal: "gold", shape: "M32 3L57 17.5V46.5L32 61 7 46.5V17.5Z", field: .8, enamel: "#d97f0e", guil: true,
+      em: '<circle cx="39.5" cy="23.5" r="5.2"/><path d="M14 45L26 27.5 32.5 35.5 37.5 30 50 45Z"/>' },
+    fuji: { metal: "silver", shape: "M32 61C23 52 8 37 8 22A24 19 0 0 1 56 22C56 37 41 52 32 61Z", field: .78, fieldDy: -2, enamel: "#6a46b6", guil: true,
+      em: '<g><ellipse cx="23" cy="19" rx="4.4" ry="3"/><ellipse cx="32" cy="17" rx="4.4" ry="3"/><ellipse cx="41" cy="19" rx="4.4" ry="3"/><ellipse cx="27" cy="25.5" rx="4" ry="2.7"/><ellipse cx="37" cy="25.5" rx="4" ry="2.7"/>' +
+        '<ellipse cx="32" cy="31.5" rx="3.7" ry="2.5"/><ellipse cx="28.5" cy="37.5" rx="3.2" ry="2.2"/><ellipse cx="35.5" cy="37.5" rx="3.2" ry="2.2"/><ellipse cx="32" cy="43" rx="2.7" ry="1.9"/></g>' },
+    umi: { metal: "silver", shape: CIRCLE, field: .8, enamel: "#0c8784", guil: true,
+      em: '<path d="M11 36c5-5.5 10.5-5.5 15.5 0s10.5 5.5 15.5 0 10-5 12-2" fill="none" stroke-width="2.2" stroke-linecap="round"/><path d="M13 44.5c5-4.5 9.5-4.5 14 0s9.5 4.5 14 0 8.5-4 11-2" fill="none" stroke-width="1.6" stroke-linecap="round"/>' +
+        '<circle cx="24" cy="22" r="3"/><circle cx="33" cy="17" r="1.9"/><circle cx="38.5" cy="24" r="1.4"/>' },
+    momiji: { metal: "copper", shape: "M32 2.7L36.3 17.3 48 10.7 44.3 24 60 22.7 49.3 33.3 54.7 37.3 37.3 38.7 34.7 45.3 33.6 61.3H30.4L29.3 45.3 26.7 38.7 9.3 37.3 14.7 33.3 4 22.7 19.7 24 16 10.7 27.7 17.3Z", field: .7, fieldDy: -1, enamel: "#b52d1b",
+      em: '<path d="M32 58V26M32 37L16 28M32 37L48 28M32 31L23.5 16M32 31L40.5 16M32 31V10" fill="none" stroke-width="1.5" stroke-linecap="round"/>' },
+    yoru: { metal: "dark", shape: star(24, 29.2, 27.4, 32, 32, 0), field: .8, enamel: "#0f1a4a", guil: true,
+      enamelExtra: '<g fill="#f6e3a6"><circle cx="20" cy="22" r=".7"/><circle cx="25" cy="44" r=".6"/><circle cx="45" cy="45" r=".8"/><circle cx="19" cy="34" r=".5"/><circle cx="43" cy="17" r=".5"/></g>',
+      em: '<path d="M37 15A17 17 0 1 0 49 39 13.5 13.5 0 1 1 37 15Z"/><path d="' + star(4, 5.5, 1.6, 44, 23, 0) + '"/>' },
+    kin: { metal: "gold", shape: star(8, 30, 22, 32, 32, Math.PI / 8), field: .74, enamel: null, guil: true,
+      em: '<path d="' + star(8, 15, 11, 32, 32, 0) + '"/><circle cx="32" cy="32" r="6.5"/>' }
+  };
+  // Adornos que crecen con cada medalla: aro, rayos, cintas, laureles, gemas y corona (todo de metal)
+  var ORN = {
+    matcha:   { scale: .86, ring: { w: 2.6 } },
+    ai:       { scale: .84, ring: { w: 2.8, beads: 24 } },
+    yamabuki: { scale: .8,  ring: { w: 2.6, beads: 24 }, rays: 16 },
+    fuji:     { scale: .78, ring: { w: 2.8, beads: 28 }, rays: 20, ribbon: ["#b9a2ea", "#55389a"] },
+    umi:      { scale: .76, ring: { w: 3, beads: 28, double: true }, rays: 24, ribbon: ["#3fc6bf", "#0d5250"], gems: { c: ["#e6fffd", "#2fb8b2", "#063f3d"], n: 1 } },
+    momiji:   { scale: .74, ring: { w: 3, beads: 30 }, rays: 24, ribbon: ["#e8653a", "#6e1a0c"], laurel: "gold", gems: { c: ["#fff1c8", "#ee9a1c", "#6a3e00"], n: 1 } },
+    yoru:     { scale: .72, ring: { w: 3.2, beads: 32, double: true }, rays: 32, rayMetal: "silver", ribbon: ["#34478f", "#0c1433"], laurel: "silver", gems: { c: ["#dbe6ff", "#3e6ad8", "#0f225e"], n: 3 } },
+    kin:      { scale: .7,  ring: { w: 3.4, beads: 36, double: true }, rays: 32, ribbon: ["#d63a3a", "#5a0a10"], laurel: "gold", gems: { c: ["#ffd6d6", "#cc2233", "#4e050d"], n: 3 }, crown: true }
+  };
+  window.KANAME_MEDAL = function (id) {
+    var m = MEDALS[id] || MEDALS.sumi, o = ORN[id] || {}, mc = METAL[m.metal];
+    var shapeT = function (pre) {
+      pre = pre ? pre + " " : "";
+      if (!m.petals) return '<path d="' + m.shape + '"' + (pre ? ' transform="' + pre + '"' : "") + '/>';
+      var s = ""; for (var k = 0; k < 5; k++) s += '<path d="' + BIG_PETAL + '" transform="' + pre + 'rotate(' + (72 * k) + ' 32 32) translate(32 32) scale(1.12) translate(-32 -32)"/>'; return s;
+    };
+    var shape = shapeT("");
+    var fieldT = 'translate(32 ' + (32 + (m.fieldDy || 0)) + ') scale(' + m.field + ') translate(-32 -32)';
+    var defs = '<defs>' + grad("m", mc) + grad("g", METAL.gold) + grad("sv", METAL.silver) +
+      grad("md", [mc[2], mc[3], mc[4], mc[3], mc[2], mc[5]]) +
+      bevel("rim", 1.3, 3.2, { grain: ".015 .8", shadow: 1.2 }) + bevel("rel", .55, 2.2, { shadow: .5 }) + bevel("orn", .7, 2.4, { shadow: .7 }) +
+      '<clipPath id="fc">' + shapeT(fieldT) + '</clipPath>' +
+      '<radialGradient id="gl" cx=".3" cy=".25" r=".8"><stop offset="0" stop-color="#fff" stop-opacity=".5"/><stop offset=".35" stop-color="#fff" stop-opacity=".08"/><stop offset="1" stop-color="#000" stop-opacity=".25"/></radialGradient>';
+    var back = "", front = "";
+    // Rayos (estrella de orden) de metal
+    if (o.rays) {
+      var rs = "";
+      for (var i = 0; i < o.rays; i++) {
+        var a = Math.PI * 2 * i / o.rays - Math.PI / 2, w = Math.PI / o.rays * 0.85, L = i % 2 ? 28.8 : 31.6;
+        var p1 = pol(17, a - w), p2 = pol(L, a), p3 = pol(17, a + w), pm = pol(L - 1.2, a);
+        rs += "M" + f(p1[0]) + " " + f(p1[1]) + "L" + f(p2[0]) + " " + f(p2[1]) + "L" + f(p3[0]) + " " + f(p3[1]) + "Z";
+      }
+      back += '<path d="' + rs + '" fill="url(#' + (o.rayMetal === "silver" ? "sv" : "g") + ')" filter="url(#orn)"/>';
+    }
+    // Cinta de tela (grogrén con rayas)
+    if (o.ribbon) {
+      defs += '<linearGradient id="rb" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="' + o.ribbon[1] + '"/><stop offset=".3" stop-color="' + o.ribbon[0] + '"/><stop offset=".55" stop-color="' + o.ribbon[0] + '"/><stop offset="1" stop-color="' + o.ribbon[1] + '"/></linearGradient>' +
+        '<pattern id="gr" width="1.2" height="1.2" patternUnits="userSpaceOnUse"><rect width="1.2" height=".6" fill="#000" fill-opacity=".12"/></pattern>';
+      var tails = '<path d="M25 43L16 63 21.5 59.6 24.8 64.5 33.5 46Z"/><path d="M39 43L48 63 42.5 59.6 39.2 64.5 30.5 46Z"/>';
+      back += '<g fill="url(#rb)">' + tails + '</g><g fill="url(#gr)">' + tails + '</g><g fill="none" stroke="#fff" stroke-opacity=".35" stroke-width=".7"><path d="M23.6 46.5L18.2 59M40.4 46.5L45.8 59"/></g>';
+    }
+    // Laurel de metal
+    if (o.laurel) {
+      var lv = "";
+      [-1, 1].forEach(function (side) {
+        lv += '<path d="M' + f(32 + side * 5) + ' 59Q' + f(32 + side * 31) + ' 53 ' + f(32 + side * 26) + ' 15" fill="none" stroke-width="1.4"/>';
+        for (var j = 0; j < 7; j++) {
+          var aa = Math.PI / 2 + 0.5 + j * 0.28;
+          var tx = side * Math.sin(aa), ty = Math.cos(aa), t = Math.atan2(-ty, -tx) * 180 / Math.PI; // dirección de la rama, hacia arriba
+          [[27.4, -38], [30.6, 38]].forEach(function (lf) {
+            var x = 32 - side * lf[0] * Math.cos(aa), y = 32 + lf[0] * Math.sin(aa);
+            var rot = t + 90 + side * lf[1] * -1;
+            lv += '<path d="M' + f(x) + ' ' + f(y - 4.3) + 'Q' + f(x + 2.7) + ' ' + f(y - .6) + ' ' + f(x) + ' ' + f(y + 4.3) + 'Q' + f(x - 2.7) + ' ' + f(y - .6) + ' ' + f(x) + ' ' + f(y - 4.3) + 'Z" transform="rotate(' + f(rot) + ' ' + f(x) + ' ' + f(y) + ')"/>';
+          });
+        }
+      });
+      back += '<g fill="url(#' + (o.laurel === "silver" ? "sv" : "g") + ')" stroke="url(#' + (o.laurel === "silver" ? "sv" : "g") + ')" filter="url(#orn)">' + lv + '</g>';
+    }
+    // Aro con perlado
+    if (o.ring) {
+      var R = 26.8, rg = '<circle cx="32" cy="32" r="' + R + '" fill="none" stroke="#000" stroke-width="' + o.ring.w + '"/>';
+      if (o.ring.double) rg += '<circle cx="32" cy="32" r="' + (R - o.ring.w - 1.4) + '" fill="none" stroke="#000" stroke-width="1"/>';
+      back += '<circle cx="32" cy="32" r="' + (R - 1) + '" fill="url(#md)" filter="url(#rim)"/><g filter="url(#orn)" fill="url(#g)"><g style="mix-blend-mode:normal">' + rg.replace(/stroke="#000"/g, 'stroke="url(#g)"') + '</g>';
+      if (o.ring.beads) for (var b2 = 0; b2 < o.ring.beads; b2++) { var bp = pol(R, Math.PI * 2 * b2 / o.ring.beads + Math.PI / o.ring.beads); back += '<circle cx="' + f(bp[0]) + '" cy="' + f(bp[1]) + '" r="1.05"/>'; }
+      back += '</g>';
+    }
+    // Cuerpo: metal con relieve, campo esmaltado (o metal guilloché en Kin) y motivo en relieve
+    var main = '<g fill="url(#m)" filter="url(#rim)">' + shape + '</g>';
+    var guil = "";
+    if (m.guil) {
+      for (var gk = 0; gk < 72; gk++) { var ga = Math.PI * 2 * gk / 72, gp = pol(34, ga); guil += "M32 32L" + f(gp[0]) + " " + f(gp[1]); }
+      guil = '<path d="' + guil + '" stroke="#000" stroke-opacity="' + (m.enamel ? ".22" : ".3") + '" stroke-width=".45"/>' +
+        '<g fill="none" stroke="#fff" stroke-opacity=".12" stroke-width=".4"><circle cx="32" cy="32" r="6"/><circle cx="32" cy="32" r="12"/><circle cx="32" cy="32" r="18"/><circle cx="32" cy="32" r="24"/></g>';
+    }
+    if (m.enamel) {
+      main += '<g clip-path="url(#fc)"><rect width="64" height="64" fill="' + m.enamel + '"/>' + guil + (m.enamelExtra || "") + '<rect width="64" height="64" fill="url(#gl)"/></g>';
+    } else {
+      main += '<g clip-path="url(#fc)"><rect width="64" height="64" fill="url(#md)"/>' + guil + '</g>';
+    }
+    main += '<g fill="none" stroke="#000" stroke-opacity=".45" stroke-width="1.1">' + shapeT(fieldT) + '</g>';
+    main += '<g fill="url(#m)" stroke="url(#m)" filter="url(#rel)">' + m.em + '</g>';
+    var sc = o.scale || 1;
+    if (sc !== 1) main = '<g transform="translate(32 32) scale(' + sc + ') translate(-32 -32)">' + main + '</g>';
+    // Gemas talladas y corona
+    if (o.gems) {
+      defs += '<linearGradient id="gm" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="' + o.gems.c[0] + '"/><stop offset=".45" stop-color="' + o.gems.c[1] + '"/><stop offset="1" stop-color="' + o.gems.c[2] + '"/></linearGradient>';
+      var gem = function (x, y, s) {
+        var d = 'M' + x + ' ' + (y - 3.8 * s) + 'L' + (x + 3.2 * s) + ' ' + y + 'L' + x + ' ' + (y + 3.8 * s) + 'L' + (x - 3.2 * s) + ' ' + y + 'Z';
+        return '<path d="' + d + '" fill="url(#g)" filter="url(#orn)" transform="translate(' + x + ' ' + y + ') scale(1.35) translate(' + (-x) + ' ' + (-y) + ')"/>' +
+          '<path d="' + d + '" fill="url(#gm)"/><path d="M' + x + ' ' + (y - 3.8 * s) + 'L' + x + ' ' + (y + 3.8 * s) + 'M' + (x - 3.2 * s) + ' ' + y + 'H' + (x + 3.2 * s) + '" stroke="#fff" stroke-opacity=".35" stroke-width=".4"/>' +
+          '<circle cx="' + (x - 1 * s) + '" cy="' + (y - 1.4 * s) + '" r="' + (.7 * s) + '" fill="#fff" fill-opacity=".9"/>';
+      };
+      front += gem(32, o.crown ? 10 : 5.6, 1);
+      if (o.gems.n > 1) front += gem(5.6, 32, .8) + gem(58.4, 32, .8);
+    }
+    if (o.crown) front += '<path d="M23 8L24.6 1.2 28.4 4.8 32 0 35.6 4.8 39.4 1.2 41 8Z" fill="url(#g)" filter="url(#orn)"/><circle cx="32" cy="1.4" r="1" fill="#ffe3e3"/><circle cx="24.6" cy="1.6" r=".7" fill="#fff"/><circle cx="39.4" cy="1.6" r=".7" fill="#fff"/>';
+    return svg(defs + '</defs>' + back + main + front, 64, 64);
+  };
+
+  window.KANAME_PALETTES = [
+    { id: "sumi", jp: "墨", name: "Sumi", days: 0, accent: "#c0503a" },
+    // Shiro: Sumi con blancos y negros intercambiados (1 día de racha)
+    { id: "shiro", jp: "白", name: "Shiro", days: 1, accent: "#c0503a", light: true,
+      bg: "#ededed", surface: "#f5f5f5", raised: "#e2e2e2", hairline: "#c9c9c9",
+      text: "#141414", muted: "#5c5c5c", faint: "#858585",
+      again: "#b4473b", hard: "#94661a", good: "#3d7d53", easy: "#3474a6",
+      mark: "白", burst: { shapes: ["seal", "dot"], colors: ["#c0503a", "#d9735d"] } },
+    // 桜色・薄桜・撫子・今様色: rosa y blanco, flores en relieve, pétalos cayendo
+    { id: "sakura", jp: "桜", name: "Sakura", days: 2, accent: "#d4577a", light: true,
+      bg: "#fbeaef", surface: "#fffafb", raised: "#f9e1e8", hairline: "#efc6d2",
+      text: "#3d2129", muted: "#8a5d69", faint: "#b48d98", status: "#c4466b",
+      again: "#c0485a", hard: "#a06a24", good: "#4a8a5c", easy: "#4a7fb0",
+      grad: "linear-gradient(180deg, #fff6f8 0%, #fde9ef 45%, #f9dce5 100%)",
+      tile: sakuraRelief(), tileSize: "200px 200px", tileOpacity: 0.9, mark: "桜",
+      amb: [{ kind: "fall", shape: "petal", colors: ["#f6b3c6", "#f19db5", "#fbd0dc", "#ffffff"], n: 11, size: [10, 16], dur: [12, 20], o: 0.85 }],
+      burst: { shapes: ["petal", "petal", "petal", "blossom"], colors: ["#f6b3c6", "#f19db5", "#fbd0dc", "#ffffff", "#ec8aa6"] } },
+    // 抹茶色・白緑・若菜: verde matcha pastel con blanco; hojas de té y polvo de matcha arriba, té líquido abajo
+    { id: "matcha", jp: "抹茶", name: "Matcha", days: 4, accent: "#6a9a35", light: true,
+      bg: "#eef4e3", surface: "#fbfdf6", raised: "#e6efd3", hairline: "#cfdfb2",
+      text: "#22301a", muted: "#5d734f", faint: "#8ea27f", status: "#5f8f30",
+      again: "#c0485a", hard: "#a06a24", good: "#3f8a4e", easy: "#4a7fb0",
+      grad: "linear-gradient(180deg, #ffffff 0%, #f3f8ea 40%, #e6f0d2 100%)",
+      bamboo: bamboo("rgba(106,154,53,.10)"), mark: "茶", matchaDust: true, liquid: true, glow: "rgba(106,154,53,.18)",
+      amb: [{ kind: "sift", shape: "tea", colors: ["#8fbf4f", "#a9cf6a", "#6f9e3a", "#c3dd8e"], n: 9, size: [9, 14], dur: [10, 16], o: 0.85 },
+            { kind: "sift", shape: "dot", colors: ["#9cc45a", "#b7d77c", "#86b443"], n: 22, size: [3, 6], dur: [7, 12], o: 0.7 }],
+      burst: { shapes: ["tea", "tea", "dot"], colors: ["#8fbf4f", "#b7d77c", "#6f9e3a", "#d8ebaa"] } },
+    // 藍色・紺青・瓶覗: índigo profundo con olas 青海波 que se mueven despacio
+    { id: "ai", jp: "藍", name: "Ai", days: 8, accent: "#8fb6ff",
+      bg: "#0c1736", surface: "#142250", raised: "#1c2c60", hairline: "#2d4180",
+      text: "#eef3ff", muted: "#a9b7dd", faint: "#6c7ba6",
+      grad: "linear-gradient(180deg, #08102a 0%, #0f1d48 55%, #142a66 100%)",
+      tile: seigaiha("rgba(143,182,255,.2)", "#13285f"), tileSize: "56px 28px", tileDrift: true,
+      tileMask: "linear-gradient(to top, #000 0%, rgba(0,0,0,.6) 30%, transparent 62%)", mark: "藍", glow: "rgba(143,182,255,.16)",
+      amb: [{ kind: "rise", shape: "dot", colors: ["#bcd4ff", "#ffffff"], n: 7, size: [4, 8], dur: [16, 26], o: 0.5 }],
+      burst: { shapes: ["drop", "star", "dot"], colors: ["#8fb6ff", "#cfe0ff", "#ffffff", "#4f7fe0"] } },
+    // 山吹色・黄金・琥珀: atardecer ámbar con rayos de luz y luciérnagas
+    { id: "yamabuki", jp: "山吹", name: "Yamabuki", days: 16, accent: "#ffc23d",
+      bg: "#170e04", surface: "#2a1c09", raised: "#37260e", hairline: "#55391a",
+      text: "#fff5de", muted: "#d0b88f", faint: "#8f7a57",
+      grad: "radial-gradient(120% 75% at 88% 108%, #7a4a08 0%, #3a2207 40%, #160c03 100%)", mark: "山",
+      rays: "rgba(255,200,90,.07)", glow: "rgba(255,194,61,.18)",
+      amb: [{ kind: "rise", shape: "dot", colors: ["#ffd25e", "#ffe7a0", "#ffb52e"], n: 15, size: [7, 15], dur: [14, 24], o: 0.85 }],
+      burst: { shapes: ["dot", "star", "star"], colors: ["#ffc23d", "#ffe08a", "#fff4cc", "#ff9f1c"] } },
+    // 藤色・藤紫・菫: violeta luminoso, glicinia meciéndose, bruma y luz
+    { id: "fuji", jp: "藤", name: "Fuji", days: 32, accent: "#cfa9ff",
+      bg: "#170f2c", surface: "#251a44", raised: "#302456", hairline: "#4a3a7a",
+      text: "#f6f0ff", muted: "#c3b4e3", faint: "#8676ab",
+      grad: "linear-gradient(180deg, #4a2d78 0%, #2a1b4c 38%, #160e2a 100%)",
+      wisteria: wisteria(), mark: "藤", rays: "rgba(220,190,255,.06)", mist: "rgba(200,170,255,.10)", glow: "rgba(207,169,255,.2)",
+      amb: [{ kind: "fall", shape: "wis", colors: ["#e0cdfa", "#bfa3ef", "#a98ae0", "#f2e9ff"], n: 13, size: [7, 12], dur: [14, 22], o: 0.7 }],
+      burst: { shapes: ["wis", "wis", "star", "dot"], colors: ["#e0cdfa", "#bfa3ef", "#f2e9ff", "#9c7ae0"] } },
+    // 浅葱・青碧・白群: océano turquesa con reflejos de luz, olas y burbujas
+    { id: "umi", jp: "海", name: "Umi", days: 64, accent: "#52e3d8",
+      bg: "#03202a", surface: "#08303b", raised: "#0d3b48", hairline: "#17596a",
+      text: "#e8fdfb", muted: "#9fd1cc", faint: "#5f938e",
+      grad: "linear-gradient(180deg, #021820 0%, #05343f 55%, #0a5560 100%)", waves: true, caustics: true, mark: "海",
+      rays: "rgba(140,240,235,.05)", glow: "rgba(82,227,216,.2)",
+      amb: [{ kind: "rise", shape: "bubble", colors: ["#9ff0ea", "#d6fffb"], n: 13, size: [6, 14], dur: [11, 20], o: 0.5 }],
+      burst: { shapes: ["bubble", "drop", "dot"], colors: ["#52e3d8", "#b4fff9", "#ffffff", "#1fb3c0"] } },
+    // 紅葉色・朱・紅・黄金: bosque en otoño, sol bajo, montañas y hojas de arce
+    { id: "momiji", jp: "紅葉", name: "Momiji", days: 70, accent: "#ff7a3d",
+      bg: "#1e0806", surface: "#36120b", raised: "#441a10", hairline: "#6a2a18",
+      text: "#fff1e8", muted: "#e0ad97", faint: "#9a6a59",
+      grad: "radial-gradient(120% 70% at 12% -5%, #8a2a12 0%, #4a120a 40%, #1c0705 100%)", mountains: true, mark: "紅",
+      rays: "rgba(255,150,80,.06)", glow: "rgba(255,122,61,.22)",
+      amb: [{ kind: "fall", shape: "leaf", colors: ["#ff7a1a", "#e2442f", "#c8282f", "#f2b52a", "#ff9a3c"], n: 14, size: [13, 22], dur: [12, 20], o: 0.85 }],
+      burst: { shapes: ["leaf", "leaf", "dot"], colors: ["#ff7a1a", "#e2442f", "#f2b52a", "#ff9a3c", "#c8282f"] } },
+    // 濃藍・群青・金: noche estrellada con vía láctea, luna y estrellas fugaces
+    { id: "yoru", jp: "夜", name: "Yoru", days: 80, accent: "#f3d98f",
+      bg: "#03061a", surface: "#0e1640", raised: "#16204f", hairline: "#2a3a78",
+      text: "#f4f1e6", muted: "#bcb8c9", faint: "#757694",
+      grad: "linear-gradient(180deg, #010312 0%, #08113a 55%, #1a2461 100%)", stars: true, moon: true, nebula: true, mark: "夜",
+      glow: "rgba(243,217,143,.18)",
+      burst: { shapes: ["star", "star", "dot"], colors: ["#fff6d6", "#f3d98f", "#ffffff", "#bfd4ff", "#e3c8ff"] } },
+    // 金色・黒: laca negra y pan de oro, red 麻の葉, marco dorado, polvo de oro y destellos
+    { id: "kin", jp: "金", name: "Kin", days: 90, accent: "#f5c84c",
+      bg: "#070503", surface: "#16110a", raised: "#221a0e", hairline: "#5a4518",
+      text: "#fff7df", muted: "#d6c393", faint: "#8f7c52",
+      grad: "radial-gradient(120% 80% at 50% -5%, #3d2c08 0%, #120d05 50%, #050402 100%)",
+      tile: triGrid("rgba(245,200,76,.11)"), tileSize: "40px 69.28px", tileMask: "radial-gradient(120% 80% at 50% 50%, transparent 25%, #000 100%)",
+      mark: "金", shimmer: true, corners: true, glints: true, sheen: triGrid("#fff"), rays: "rgba(255,215,110,.06)", glow: "rgba(245,200,76,.25)",
+      amb: [{ kind: "rise", shape: "star", colors: ["#f5c84c", "#ffe48f", "#fff6d0"], n: 16, size: [5, 11], dur: [16, 26], o: 0.85 }],
+      burst: { shapes: ["star", "star", "dot"], colors: ["#f5c84c", "#ffe48f", "#fff6d0", "#d99a1c"] } }
+  ];
+
+  function rnd(a, b) { return a + Math.random() * (b - a); }
+  function pick(a) { return a[Math.floor(Math.random() * a.length)]; }
+  function node(cls, style) { var e = document.createElement("div"); if (cls) e.className = cls; if (style) e.setAttribute("style", style); return e; }
+
+  // Fondo decorativo de la paleta
+  function buildDecor(pal) {
+    var d = document.getElementById("decor");
+    if (!d) { d = node(); d.id = "decor"; d.setAttribute("aria-hidden", "true"); document.body.insertBefore(d, document.body.firstChild); }
+    d.innerHTML = "";
+    d.style.background = pal.grad || "transparent";
+    if (pal.id === "sumi") return;
+    if (pal.tile) {
+      var t = node("tile"); t.style.backgroundImage = pal.tile; t.style.backgroundSize = pal.tileSize;
+      if (pal.tileOpacity) t.style.opacity = pal.tileOpacity;
+      if (pal.tileMask) { t.style.webkitMaskImage = pal.tileMask; t.style.maskImage = pal.tileMask; }
+      d.appendChild(t);
+    }
+    if (pal.bamboo) { var bb = node("bamboo"); bb.style.backgroundImage = pal.bamboo; d.appendChild(bb); }
+    if (pal.wisteria) { var w = node("wisteria"); w.style.backgroundImage = pal.wisteria; d.appendChild(w); }
+    if (pal.mark) { var m = node("mark"); m.textContent = pal.mark; d.appendChild(m); }
+    if (pal.steam) for (var s = 0; s < 3; s++) d.appendChild(node("steam", "left:" + (18 + s * 26) + "%;animation-delay:" + (-s * 4.5) + "s;animation-duration:" + (13 + s * 2) + "s"));
+    if (pal.matchaDust) d.appendChild(node("dust"));
+    if (pal.liquid) {
+      d.appendChild(node("tea-body"));
+      d.appendChild(node("wave tw2", "background-image:" + wave("#cfe5a6")));
+      d.appendChild(node("wave tw1", "background-image:" + wave("#a9cf6a")));
+      for (var bq = 0; bq < 7; bq++) d.appendChild(node("foam", "left:" + rnd(3, 95) + "%;width:" + rnd(3, 7) + "px;height:" + rnd(3, 7) + "px;animation-delay:" + (-rnd(0, 6)) + "s;animation-duration:" + rnd(4, 7) + "s"));
+    }
+    if (pal.waves) { d.appendChild(node("wave w1", "background-image:" + wave("rgba(63,193,187,.07)"))); d.appendChild(node("wave w2", "background-image:" + wave("rgba(162,215,221,.05)"))); }
+    if (pal.moon) d.appendChild(node("moon"));
+    if (pal.stars) {
+      for (var i = 0; i < 46; i++) {
+        var sz = rnd(1, 2.6);
+        d.appendChild(node("star", "left:" + rnd(0, 100) + "%;top:" + rnd(0, 92) + "%;width:" + sz + "px;height:" + sz + "px;animation-duration:" + rnd(2.5, 6) + "s;animation-delay:" + (-rnd(0, 6)) + "s;--o:" + rnd(0.45, 0.95)));
+      }
+      d.appendChild(node("shoot"));
+    }
+    if (pal.shimmer) d.appendChild(node("shimmer"));
+    if (pal.rays) d.appendChild(node("godrays", "--rc:" + pal.rays));
+    if (pal.mist) { d.appendChild(node("mist m1", "--mc:" + pal.mist)); d.appendChild(node("mist m2", "--mc:" + pal.mist)); }
+    if (pal.caustics) { d.appendChild(node("caus c1")); d.appendChild(node("caus c2")); }
+    if (pal.nebula) d.appendChild(node("nebula"));
+    if (pal.mountains) {
+      d.appendChild(node("mount", "background-image:" + svg('<path d="M0 120V70L40 48 70 62 120 20 160 52 190 40 240 78 280 55 330 30 370 58 400 50V120Z" fill="#5a160c" fill-opacity=".55"/><path d="M0 120V92L50 70 90 86 140 60 200 90 250 72 300 94 350 76 400 88V120Z" fill="#2c0905" fill-opacity=".8"/>', 400, 120)));
+    }
+    if (pal.corners) {
+      var c = svg('<g fill="none" stroke="#f5c84c" stroke-linecap="round"><path d="M4 70V12Q4 4 12 4H70" stroke-width="1.6"/><path d="M10 52V18Q10 10 18 10H52" stroke-width=".8" stroke-opacity=".7"/><path d="M16 16h5v5h-5z" transform="rotate(45 18.5 18.5)" fill="#f5c84c" fill-opacity=".6" stroke-width=".6"/><circle cx="4" cy="76" r="1.6" fill="#f5c84c"/><circle cx="76" cy="4" r="1.6" fill="#f5c84c"/></g>', 80, 80);
+      ["tl", "tr", "bl", "br"].forEach(function (k) { d.appendChild(node("corner " + k, "background-image:" + c)); });
+    }
+    if (pal.sheen) { var sh = node("sheen"); sh.style.webkitMaskImage = pal.sheen; sh.style.maskImage = pal.sheen; sh.style.webkitMaskSize = pal.tileSize; sh.style.maskSize = pal.tileSize; d.appendChild(sh); }
+    if (pal.glints) for (var g = 0; g < 16; g++) {
+      var gs = rnd(10, 22);
+      d.appendChild(node("glint", "left:" + rnd(2, 96) + "%;top:" + rnd(3, 95) + "%;width:" + gs + "px;height:" + gs + "px;background-image:" + window.KANAME_SHAPE("star", pick(["#fff6d0", "#ffe48f", "#ffffff"])) + ";animation-duration:" + rnd(5, 10) + "s;animation-delay:" + (-rnd(0, 10)) + "s"));
+    }
+    if (pal.tileDrift && d.querySelector(".tile")) d.querySelector(".tile").classList.add("drift");
+    (pal.amb || []).forEach(function (a) {
+      for (var j = 0; j < a.n; j++) {
+        var size = rnd(a.size[0], a.size[1]), dur = rnd(a.dur[0], a.dur[1]);
+        var o = node(a.kind, "left:" + rnd(-5, 100) + "%;animation-duration:" + dur + "s;animation-delay:" + (-rnd(0, dur)) + "s;--dx:" + rnd(-18, 18) + "vw;--r:" + rnd(-540, 540) + "deg;--o:" + (a.o * rnd(0.6, 1)));
+        var i2 = document.createElement("i");
+        i2.setAttribute("style", "width:" + size + "px;height:" + size + "px;background-image:" + window.KANAME_SHAPE(a.shape, pick(a.colors)) + ";animation-duration:" + rnd(2.5, 5) + "s;--sw:" + rnd(8, 26) + "px");
+        o.appendChild(i2); d.appendChild(o);
+      }
+    });
+  }
+
+  var current = null;
+  // Lluvia de pétalos/hojas/estrellas: «small» al acertar una tarjeta, «big» al completar el día o ganar una paleta
+  window.kanameBurst = function (big, fromEl) {
+    var pal = current;
+    if (!pal || !pal.burst || !document.body) return;
+    if (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    var layer = document.getElementById("burst");
+    if (!layer) { layer = node(); layer.id = "burst"; layer.setAttribute("aria-hidden", "true"); document.body.appendChild(layer); }
+    var W = window.innerWidth, H = window.innerHeight, ox = W / 2, oy = H * 0.45;
+    if (fromEl && fromEl.getBoundingClientRect) { var r = fromEl.getBoundingClientRect(); ox = r.left + r.width / 2; oy = r.top + r.height * 0.42; }
+    function one(x, y, dx, dy, dur, delay, size) {
+      var e = document.createElement("i");
+      e.style.cssText = "left:" + (x - size / 2) + "px;top:" + (y - size / 2) + "px;width:" + size + "px;height:" + size + "px;background-image:" + window.KANAME_SHAPE(pick(pal.burst.shapes), pick(pal.burst.colors));
+      layer.appendChild(e);
+      var rot = rnd(-420, 420);
+      if (!e.animate) { setTimeout(function () { e.remove(); }, 50); return; }
+      var a = e.animate([
+        { transform: "translate(0,0) rotate(0deg) scale(.4)", opacity: 0 },
+        { transform: "translate(" + dx * 0.55 + "px," + dy * 0.35 + "px) rotate(" + rot * 0.4 + "deg) scale(1)", opacity: 1, offset: 0.25 },
+        { transform: "translate(" + dx + "px," + (dy + H * 0.18) + "px) rotate(" + rot + "deg) scale(.9)", opacity: 0 }
+      ], { duration: dur, delay: delay, easing: "cubic-bezier(.2,.65,.35,1)", fill: "both" });
+      a.onfinish = function () { e.remove(); };
+    }
+    var tier = Math.max(0, window.KANAME_PALETTES.indexOf(pal) - 2); // 0 = Sakura … 8 = Kin
+    if (big && tier >= 3) { var fl = node("flash"); fl.style.left = ox + "px"; fl.style.top = oy + "px"; layer.appendChild(fl); setTimeout(function () { fl.remove(); }, 1300); }
+    var n = (big ? 26 : 8) + tier * (big ? 3 : 1);
+    for (var k = 0; k < n; k++) {
+      var ang = rnd(0, Math.PI * 2), sp = rnd(60, big ? 230 : 140);
+      one(ox, oy, Math.cos(ang) * sp, Math.sin(ang) * sp - (big ? 80 : 40), rnd(1100, big ? 2200 : 1600), rnd(0, big ? 200 : 80), rnd(10, 18));
+    }
+    if (big) for (var q = 0; q < 34 + tier * 5; q++) one(rnd(0, W), -20, rnd(-60, 60), H * rnd(0.75, 1.05), rnd(2600, 4200), rnd(0, 1400), rnd(10, 19));
+  };
+
+  window.applyKanamePalette = function (id) {
+    var P = window.KANAME_PALETTES, pal = P[0];
+    for (var i = 0; i < P.length; i++) if (P[i].id === id) pal = P[i];
+    current = pal;
+    var r = document.documentElement.style, deco = pal.id !== "sumi";
+    var surface = pal.surface || "#1c1c1c";
+    r.setProperty("--accent", pal.accent);
+    r.setProperty("--accent-soft", pal.accent + "2e");
+    r.setProperty("--bg", pal.bg || "#121212");
+    r.setProperty("--surface-solid", surface);
+    r.setProperty("--surface", deco ? surface + (pal.light ? "e8" : "e3") : surface); // un poco translúcida para que se intuya el fondo
+    r.setProperty("--surface-raised", pal.raised || "#262626");
+    r.setProperty("--hairline", pal.hairline || "#333");
+    r.setProperty("--text", pal.text || "#ebebeb");
+    r.setProperty("--text-muted", pal.muted || "#9a9a9a");
+    r.setProperty("--text-faint", pal.faint || "#686868");
+    r.setProperty("--status", pal.status || "#121212");
+    r.setProperty("--glow", pal.glow || "transparent");
+    var RATE = { again: "#d0685c", hard: "#c99a4a", good: "#6fae84", easy: "#7fb8e0" };
+    for (var k in RATE) { var c = pal[k] || RATE[k]; r.setProperty("--" + k, c); r.setProperty("--" + k + "-soft", c + (k === "easy" ? "24" : "1f")); }
+    r.setProperty("color-scheme", pal.light ? "light" : "dark");
+    document.documentElement.classList.toggle("light", !!pal.light);
+    document.documentElement.setAttribute("data-pal", pal.id);
+    var m = document.querySelector('meta[name="theme-color"]'); if (m) m.setAttribute("content", pal.bg || "#121212");
+    var cs = document.querySelector('meta[name="color-scheme"]'); if (cs) cs.setAttribute("content", pal.light ? "light" : "dark");
+    if (document.body) buildDecor(pal);
+    else document.addEventListener("DOMContentLoaded", function () { if (current === pal) buildDecor(pal); });
+  };
+  try { window.applyKanamePalette(localStorage.getItem("kaname-kana.palette.v1") || "sumi"); } catch (e) { window.applyKanamePalette("sumi"); }
+})();
+</script>
+<script>
+  // En KanaMe Kana las medallas llegan antes (el kana se aprende en pocas semanas): 1, 2 y luego cada 2 días hasta 18
+  (function () { var D = { sumi: 0, shiro: 1, sakura: 2, matcha: 4, ai: 6, yamabuki: 8, fuji: 10, umi: 12, momiji: 14, yoru: 16, kin: 18 };
+    (window.KANAME_PALETTES || []).forEach(function (p) { if (p.id in D) p.days = D[p.id]; }); })();
+</script>
+
 <!-- Estadísticas de visitas anónimas y sin cookies (GoatCounter). Si no hay conexión, no hace nada. -->
 <script data-goatcounter="https://lucassuarezzz.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 
@@ -38,8 +514,9 @@
     --text-faint: #686868;
     --accent: #c0503a;
     --accent-soft: #c0503a2e;
-    --bad:  #d0685c;  --bad-soft:  #d0685c1f;
+    --again: #d0685c; --again-soft: #d0685c1f;
     --good: #6fae84;  --good-soft: #6fae841f;
+    --bad: var(--again); --bad-soft: var(--again-soft);
     --radius-lg: 22px;
     --radius-md: 14px;
     --radius-sm: 10px;
@@ -157,7 +634,7 @@
   /* Result sheet */
   .sheet-backdrop { position: fixed; inset: 0; background: #000a; display: none; align-items: flex-end; justify-content: center; z-index: 10; }
   .sheet-backdrop.open { display: flex; }
-  .sheet { width: 100%; max-width: 480px; background: var(--surface); border-top: 1px solid var(--hairline); border-radius: 22px 22px 0 0; padding: 22px 18px calc(20px + env(safe-area-inset-bottom)); max-height: 88dvh; overflow-y: auto; }
+  .sheet { width: 100%; max-width: 480px; background: var(--surface-solid, var(--surface)); border-top: 1px solid var(--hairline); border-radius: 22px 22px 0 0; padding: 22px 18px calc(20px + env(safe-area-inset-bottom)); max-height: 88dvh; overflow-y: auto; }
   .sheet h2 { margin: 0 0 4px; font-size: 18px; }
   .sheet .sub { margin: 0 0 16px; font-size: 13px; color: var(--text-muted); line-height: 1.5; }
   .sheet h3 { margin: 18px 0 8px; font-size: 12px; color: var(--text-faint); letter-spacing: .06em; text-transform: uppercase; }
@@ -180,6 +657,272 @@
     .kana { font-size: 92px; }
     .kana.long { font-size: 76px; }
   }
+  .streak-btn {
+    appearance: none; background: none; border: 1px solid var(--hairline); color: var(--text-muted);
+    height: 38px; padding: 0 12px 0 10px; border-radius: 999px; cursor: pointer;
+    display: flex; align-items: center; gap: 5px; font-size: 15px; font-weight: 700; font-variant-numeric: tabular-nums;
+  }
+  .streak-btn svg { width: 17px; height: 17px; }
+  .streak-btn.on { color: var(--accent); border-color: var(--accent); background: var(--accent-soft); }
+  .streak-btn:active { transform: scale(.94); }
+  /* Kanji de hoy */
+  .today {
+    appearance: none; width: 100%; display: flex; align-items: center; gap: 12px; text-align: left; color: var(--text);
+    border: 1px solid var(--hairline); background: var(--surface); border-radius: var(--radius-md);
+    padding: 10px 14px; margin-bottom: 8px; cursor: pointer; transition: background .15s, border-color .15s;
+  }
+  .today:active { transform: scale(.98); }
+  .today .jp { font-size: 22px; font-weight: 700; color: var(--accent); }
+  .today .txt { flex: 1; min-width: 0; }
+  .today .t { display: block; font-size: 15px; font-weight: 700; }
+  .today .s { display: block; font-size: 12px; color: var(--text-muted); margin-top: 1px; }
+  .today .right { font-size: 13px; font-weight: 700; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+  .today.active { background: var(--accent-soft); border-color: var(--accent); }
+  .today.done .right { color: var(--good); }
+  /* Racha y paletas (hoja de progreso) */
+  .streak-hero { display: flex; align-items: center; gap: 14px; background: var(--surface-raised); border-radius: var(--radius-md); padding: 14px 16px; }
+  .streak-hero .big { font-size: 38px; font-weight: 800; line-height: 1; color: var(--accent); font-variant-numeric: tabular-nums; }
+  .streak-hero .big small { font-size: 15px; font-weight: 600; color: var(--text-muted); margin-left: 4px; }
+  .streak-hero .info { font-size: 12.5px; color: var(--text-muted); line-height: 1.45; }
+  .streak-hero .info b { color: var(--text); }
+  /* Paleta clara: en el iPhone la barra de estado (hora, batería) es blanca; se le pone fondo oscuro para que se lea */
+  html.light body::before { content: ""; position: fixed; top: 0; left: 0; right: 0; height: env(safe-area-inset-top); background: var(--status, #121212); z-index: 30; pointer-events: none; }
+  /* Tutorial de la primera vez: se oscurece todo menos la parte que se explica */
+  .tour { position: fixed; inset: 0; z-index: 40; }
+  .tour-hole { position: fixed; border-radius: 16px; box-shadow: 0 0 0 9999px rgba(0, 0, 0, .68); transition: top .25s, left .25s, width .25s, height .25s; pointer-events: none; }
+  .tour-hole::after { content: ""; position: absolute; inset: -2px; border-radius: inherit; border: 2px solid var(--accent); }
+  .tour-bubble { position: fixed; background: var(--surface-solid, var(--surface)); color: var(--text); border: 1px solid var(--hairline); border-radius: 16px; padding: 14px 16px 12px; box-shadow: 0 12px 32px rgba(0, 0, 0, .45); transition: top .25s, left .25s; }
+  .tour-bubble h4 { margin: 0 0 6px; font-size: 16px; }
+  .tour-bubble p { margin: 0 0 6px; font-size: 13.5px; line-height: 1.5; color: var(--text-muted); }
+  .tour-bubble p b { color: var(--text); font-weight: 600; }
+  .tour-chips { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; margin: 8px 0 6px; }
+  .tour-chips span { border-radius: 9px; padding: 5px 2px; text-align: center; font-size: 11.5px; font-weight: 700; line-height: 1.3; }
+  .tour-chips small { display: block; font-weight: 500; font-size: 10.5px; opacity: .85; }
+  .tour-nav { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
+  .tour-dots { flex: 1; display: flex; gap: 5px; }
+  .tour-dots i { width: 6px; height: 6px; border-radius: 50%; background: var(--hairline); }
+  .tour-dots i.on { background: var(--accent); }
+  .tour-skip { appearance: none; background: none; border: none; color: var(--text-muted); font-size: 13.5px; padding: 8px 4px; cursor: pointer; }
+  .tour-next { padding: 9px 18px; }
+  .tour-next:focus { outline: none; }
+
+  /* Ventana «Has empezado una racha» */
+  .intro-hero { text-align: center; padding: 4px 0 2px; }
+  .intro-hero .fire { font-size: 44px; line-height: 1; margin-bottom: 10px; }
+  .intro-hero h2 { margin: 0 0 12px; font-size: 20px; }
+  .intro-pal { display: flex; align-items: center; gap: 12px; text-align: left; background: var(--surface-raised); border-radius: var(--radius-md); padding: 12px 14px; margin-bottom: 14px; }
+  .intro-pal .sw { flex: 0 0 auto; width: 34px; height: 34px; border-radius: 50%; }
+  .intro-pal b { display: block; font-size: 15px; color: var(--text); }
+  .intro-pal span { font-size: 12.5px; color: var(--text-muted); line-height: 1.4; }
+  .intro-list { list-style: none; margin: 0 0 16px; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+  .intro-list li { display: flex; gap: 10px; font-size: 14px; line-height: 1.45; color: var(--text-muted); }
+  .intro-list li .ic { flex: 0 0 22px; text-align: center; }
+  .intro-list li b { color: var(--text); font-weight: 600; }
+
+  /* Recordatorio */
+  .rem-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; background: var(--surface-raised); border-radius: var(--radius-md); padding: 12px 14px; }
+  .rem-row .t { font-size: 15px; font-weight: 600; }
+  .rem-row .s { display: block; font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+  select.time { appearance: none; -webkit-appearance: none; background: var(--bg); color: var(--text); border: 1px solid var(--hairline); border-radius: var(--radius-sm); font: 600 16px/1 inherit; font-family: inherit; padding: 9px 30px 9px 12px; background-image: linear-gradient(45deg, transparent 50%, var(--text-muted) 50%), linear-gradient(135deg, var(--text-muted) 50%, transparent 50%); background-position: calc(100% - 15px) 52%, calc(100% - 10px) 52%; background-size: 5px 5px; background-repeat: no-repeat; font-variant-numeric: tabular-nums; }
+  .rem-time { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 8px; padding: 0 2px; font-size: 14px; color: var(--text-muted); }
+  .rem-hero { text-align: center; padding: 6px 0 4px; }
+  .rem-hero .bell { font-size: 44px; line-height: 1; margin-bottom: 10px; }
+  .rem-hero h2 { margin: 0 0 8px; font-size: 20px; }
+  .rem-hero p { margin: 0 auto 16px; font-size: 14px; color: var(--text-muted); line-height: 1.5; max-width: 330px; }
+  .rem-pick { display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 15px; color: var(--text-muted); margin-bottom: 6px; }
+  .note { font-size: 12.5px; color: var(--text-muted); line-height: 1.5; margin: 8px 0 0; }
+  .toast { position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom)); transform: translateX(-50%) translateY(20px); background: var(--surface-raised); border: 1px solid var(--hairline); color: var(--text); font-size: 13.5px; padding: 10px 16px; border-radius: 999px; opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s; z-index: 20; }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  /* ===== Fondo de las paletas: relieve, motivos y efectos suaves ===== */
+  .app { position: relative; z-index: 1; }
+  #decor { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; transition: background .4s; }
+  #decor > * { position: absolute; }
+  #decor .tile { inset: 0; background-repeat: repeat; }
+  #decor .bamboo { top: 0; bottom: 0; left: -14px; width: 120px; background-size: 120px 800px; background-repeat: repeat-y; }
+  #decor .wisteria { top: -6px; left: 0; right: 0; height: 190px; background-size: 124px 190px; background-repeat: repeat-x; transform-origin: 50% 0; animation: kwis 9s ease-in-out infinite alternate;
+    -webkit-mask-image: linear-gradient(#000 40%, transparent); mask-image: linear-gradient(#000 30%, transparent); opacity: .38; }
+  /* Kanji grande en relieve (luz desde arriba a la izquierda) */
+  #decor .mark { right: -9vmin; bottom: -7vmin; font-size: 66vmin; line-height: 1; font-weight: 700;
+    font-family: "Hiragino Mincho ProN", "Yu Mincho", "Noto Serif JP", serif;
+    color: rgba(255, 255, 255, .025); text-shadow: -1.5px -1.5px 0 rgba(255, 255, 255, .06), 2px 2px 2px rgba(0, 0, 0, .55); }
+  html.light #decor .mark { color: rgba(255, 255, 255, .22); text-shadow: -1.5px -1.5px 0 rgba(255, 255, 255, .8), 1.5px 1.5px 2px rgba(120, 40, 60, .1); }
+  html[data-pal="matcha"] #decor .mark { text-shadow: -1.5px -1.5px 0 rgba(255, 255, 255, .9), 1.5px 1.5px 2px rgba(60, 100, 20, .14); }
+  html[data-pal="shiro"] #decor .mark { color: rgba(0, 0, 0, .025); text-shadow: -1.5px -1.5px 0 rgba(255, 255, 255, .9), 1.5px 1.5px 2px rgba(0, 0, 0, .08); }
+  /* Caída (pétalos, hojas) y subida (luciérnagas, burbujas, polvo de oro) */
+  #decor .fall, #decor .rise { top: 0; will-change: transform; animation-timing-function: linear; animation-iteration-count: infinite; opacity: var(--o); }
+  #decor .fall { animation-name: kfall; }
+  #decor .rise { animation-name: krise; }
+  #decor .fall i, #decor .rise i { display: block; background-size: contain; background-repeat: no-repeat; animation: ksway ease-in-out infinite alternate; }
+  #decor .rise i { animation-name: kpulse; }
+  @keyframes kfall { from { transform: translate3d(0, -8vh, 0) rotate(0deg); } to { transform: translate3d(var(--dx), 108vh, 0) rotate(var(--r)); } }
+  @keyframes krise { 0% { transform: translate3d(0, 104vh, 0); opacity: 0; } 12% { opacity: var(--o); } 85% { opacity: var(--o); } 100% { transform: translate3d(var(--dx), -6vh, 0); opacity: 0; } }
+  @keyframes ksway { from { transform: translateX(calc(var(--sw) * -1)) rotate(-30deg); } to { transform: translateX(var(--sw)) rotate(40deg); } }
+  @keyframes kpulse { from { transform: translateX(calc(var(--sw) * -1)) scale(.7); opacity: .5; } to { transform: translateX(var(--sw)) scale(1.1); opacity: 1; } }
+  @keyframes kwis { from { transform: skewX(-1.2deg); } to { transform: skewX(1.2deg); } }
+  /* Vapor del té */
+  #decor .steam { bottom: -20vh; width: 46vw; height: 46vw; border-radius: 50%; background: radial-gradient(closest-side, rgba(190, 225, 160, .09), transparent); animation: ksteam linear infinite; }
+  @keyframes ksteam { 0% { transform: translateY(0) scale(.7); opacity: 0; } 20% { opacity: 1; } 100% { transform: translateY(-115vh) scale(1.6); opacity: 0; } }
+  /* Olas */
+  #decor .wave { left: 0; bottom: 0; width: 200%; height: 60px; background-size: 400px 60px; background-repeat: repeat-x; animation: kwave 16s linear infinite; }
+  #decor .wave.w2 { bottom: 14px; animation-duration: 24s; animation-direction: reverse; opacity: .9; }
+  @keyframes kwave { from { transform: translateX(0); } to { transform: translateX(-400px); } }
+  /* Noche: luna, estrellas y una estrella fugaz de vez en cuando */
+  #decor .moon { top: calc(70px + env(safe-area-inset-top)); right: 12vw; width: 54px; height: 54px; border-radius: 50%; box-shadow: inset -11px 7px 0 0 #f1e5bf; filter: drop-shadow(0 0 14px rgba(241, 229, 191, .35)); opacity: .55; }
+  #decor .star { border-radius: 50%; background: #fff; animation: ktw ease-in-out infinite; }
+  @keyframes ktw { 0%, 100% { opacity: .12; } 50% { opacity: var(--o); } }
+  #decor .shoot { top: 12%; left: 8%; width: 120px; height: 1.5px; background: linear-gradient(90deg, transparent, rgba(255, 246, 214, .9)); transform: rotate(18deg); opacity: 0; animation: kshoot 13s ease-in 4s infinite; }
+  @keyframes kshoot { 0%, 92% { opacity: 0; transform: rotate(18deg) translateX(0); } 94% { opacity: 1; } 100% { opacity: 0; transform: rotate(18deg) translateX(70vw); } }
+  /* Destello dorado que cruza el fondo */
+  #decor .shimmer { top: -20%; bottom: -20%; left: -60%; width: 45%; background: linear-gradient(100deg, transparent, rgba(224, 184, 74, .07), transparent); animation: kshim 11s ease-in-out infinite; }
+  @keyframes kshim { 0% { transform: translateX(0) skewX(-12deg); } 60%, 100% { transform: translateX(380%) skewX(-12deg); } }
+  /* Lluvia de pétalos/hojas al acertar y al completar el día */
+  #burst { position: fixed; inset: 0; pointer-events: none; z-index: 36; overflow: hidden; }
+  #burst i { position: absolute; display: block; background-size: contain; background-repeat: no-repeat; will-change: transform, opacity; }
+  @media (prefers-reduced-motion: reduce) {
+    #decor *, #decor .fall i, #decor .rise i { animation: none !important; }
+    #decor .fall, #decor .rise, #decor .steam, #decor .shoot, #decor .shimmer { display: none; }
+  }
+  /* ===== Medallero ===== */
+  .palettes { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 10px; padding: 10px 8px; border-radius: var(--radius-md);
+    background: var(--bg); box-shadow: inset 0 2px 10px rgba(0, 0, 0, .35); border: 1px solid var(--hairline); }
+  html.light .palettes { box-shadow: inset 0 2px 8px rgba(0, 0, 0, .1); }
+  .pal { appearance: none; border: 1px solid transparent; background: none; color: var(--text); border-radius: 12px; padding: 6px 0 5px; cursor: pointer; text-align: center; min-width: 0; }
+  .pal .well { width: 56px; height: 56px; margin: 0 auto 4px; border-radius: 50%; display: grid; place-items: center;
+    background: radial-gradient(circle at 50% 40%, var(--surface-raised), var(--bg) 75%); box-shadow: inset 0 2px 5px rgba(0, 0, 0, .45), 0 1px 0 rgba(255, 255, 255, .05); }
+  html.light .pal .well { box-shadow: inset 0 2px 5px rgba(0, 0, 0, .14), 0 1px 0 #fff; }
+  .pal .md { width: 50px; height: 50px; background-size: contain; background-repeat: no-repeat; background-position: center; filter: drop-shadow(0 2px 2px rgba(0, 0, 0, .35)); transition: transform .2s; }
+  .pal:active .md { transform: scale(.92); }
+  .pal .nm { display: block; font-size: 11px; font-weight: 600; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .pal .nm b { font-weight: 500; color: var(--text-faint); margin-right: 3px; }
+  .pal.sel { border-color: var(--accent); background: var(--accent-soft); }
+  .pal.sel .nm { color: var(--text); }
+  .pal.locked { cursor: default; }
+  .pal.locked .md { filter: brightness(0); opacity: .28; }
+  html.light .pal.locked .md { opacity: .14; }
+  .pal.locked .nm { color: var(--text-faint); font-weight: 500; }
+
+  /* Aparición de la medalla al desbloquear una paleta */
+  .medal-reveal { position: fixed; inset: 0; z-index: 35; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 24px; text-align: center;
+    background: radial-gradient(circle at 50% 38%, var(--accent-soft), transparent 60%), rgba(8, 8, 10, .8); -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px); }
+  .medal-reveal.open { display: flex; animation: kfade .35s ease-out; }
+  @keyframes kfade { from { opacity: 0; } to { opacity: 1; } }
+  .medal-stage { position: relative; width: 200px; height: 200px; display: grid; place-items: center; perspective: 700px; margin-bottom: 10px; }
+  .medal-rays { position: absolute; inset: -50px; border-radius: 50%; opacity: 0;
+    background: repeating-conic-gradient(from 0deg, rgba(255, 255, 255, .13) 0deg 7deg, transparent 7deg 22deg);
+    -webkit-mask-image: radial-gradient(circle, #000 25%, transparent 68%); mask-image: radial-gradient(circle, #000 25%, transparent 68%);
+    animation: krays-in .6s .9s ease-out forwards, krays 18s linear infinite; }
+  @keyframes krays-in { to { opacity: 1; } }
+  @keyframes krays { to { transform: rotate(360deg); } }
+  .medal-big { position: relative; width: 150px; height: 150px; background-size: contain; background-repeat: no-repeat; filter: drop-shadow(0 10px 18px rgba(0, 0, 0, .55));
+    animation: kmedal 1.5s cubic-bezier(.2, .8, .25, 1) both; }
+  .medal-big::after { content: ""; position: absolute; inset: 0; -webkit-mask-image: var(--m); mask-image: var(--m); -webkit-mask-size: contain; mask-size: contain;
+    background: linear-gradient(115deg, transparent 35%, rgba(255, 255, 255, .85) 50%, transparent 65%) no-repeat; background-size: 300% 100%; background-position: 120% 0;
+    animation: kshine 1.1s 1.35s ease-in-out both; }
+  @keyframes kmedal { 0% { transform: translateY(-55vh) rotateY(0deg) scale(.35); opacity: 0; } 15% { opacity: 1; }
+    60% { transform: translateY(0) rotateY(1080deg) scale(1.15); } 78% { transform: rotateY(1080deg) scale(.95); } 100% { transform: rotateY(1080deg) scale(1); } }
+  @keyframes kshine { from { background-position: 120% 0; } to { background-position: -20% 0; } }
+  .medal-reveal .kicker { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: rgba(255, 255, 255, .7); opacity: 0; animation: kup .5s 1.2s ease-out forwards; }
+  .medal-reveal h2 { margin: 6px 0 4px; font-size: 26px; color: #fff; opacity: 0; animation: kup .5s 1.3s ease-out forwards; }
+  .medal-reveal h2 span { color: var(--accent); margin-right: 6px; }
+  .medal-reveal p { margin: 0 0 22px; font-size: 14px; color: rgba(255, 255, 255, .75); line-height: 1.5; max-width: 290px; opacity: 0; animation: kup .5s 1.45s ease-out forwards; }
+  .medal-reveal .pill-btn { opacity: 0; animation: kup .5s 1.6s ease-out forwards; color: #fff; }
+  @keyframes kup { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) { .medal-big, .medal-big::after, .medal-rays { animation: none; opacity: 1; } }
+  /* Efectos de las paletas más altas */
+  .card, .today, .set-btn.active { box-shadow: 0 0 44px -14px var(--glow, transparent); }
+  #decor .tile.drift { inset: -60px; animation: kdrift 40s linear infinite; }
+  @keyframes kdrift { from { transform: translate(0, 0); } to { transform: translate(56px, 28px); } }
+  #decor .godrays { top: -40vh; right: -40vw; width: 140vw; height: 140vw; border-radius: 50%;
+    background: repeating-conic-gradient(from 0deg, var(--rc) 0deg 6deg, transparent 6deg 17deg);
+    -webkit-mask-image: radial-gradient(circle, #000 0%, transparent 70%); mask-image: radial-gradient(circle, #000 0%, transparent 70%); animation: krays 120s linear infinite; }
+  #decor .mist { left: -30%; width: 160%; height: 40vh; border-radius: 50%; background: radial-gradient(closest-side, var(--mc), transparent); animation: kmist 30s ease-in-out infinite alternate; }
+  #decor .mist.m1 { top: 30vh; } #decor .mist.m2 { top: 62vh; animation-duration: 38s; animation-direction: alternate-reverse; }
+  @keyframes kmist { from { transform: translateX(-12%); } to { transform: translateX(12%); } }
+  #decor .caus { inset: -20%; opacity: .55; mix-blend-mode: screen;
+    background: radial-gradient(18% 12% at 20% 30%, rgba(120, 240, 230, .12), transparent 70%), radial-gradient(14% 10% at 70% 20%, rgba(160, 255, 245, .1), transparent 70%),
+      radial-gradient(22% 14% at 55% 65%, rgba(100, 220, 220, .1), transparent 70%), radial-gradient(16% 10% at 15% 80%, rgba(140, 250, 240, .09), transparent 70%);
+    animation: kcaus 18s ease-in-out infinite alternate; }
+  #decor .caus.c2 { animation-duration: 25s; animation-direction: alternate-reverse; transform: scale(1.3); }
+  @keyframes kcaus { from { transform: translate(-4%, -3%) rotate(0deg); } to { transform: translate(4%, 3%) rotate(8deg); } }
+  #decor .nebula { top: -10%; left: -30%; width: 160%; height: 70%; transform: rotate(-24deg); opacity: .9;
+    background: radial-gradient(40% 18% at 50% 50%, rgba(160, 130, 255, .14), transparent 70%), radial-gradient(25% 12% at 35% 45%, rgba(255, 190, 230, .08), transparent 70%), radial-gradient(30% 10% at 65% 55%, rgba(140, 200, 255, .1), transparent 70%); }
+  #decor .mount { left: 0; right: 0; bottom: 0; height: 22vh; background-size: 100% 100%; }
+  #decor .corner { width: 64px; height: 64px; background-size: contain; opacity: .45; }
+  #decor .corner.tl { top: calc(4px + env(safe-area-inset-top)); left: 4px; }
+  #decor .corner.tr { top: calc(4px + env(safe-area-inset-top)); right: 4px; transform: scaleX(-1); }
+  #decor .corner.bl { bottom: 4px; left: 4px; transform: scaleY(-1); }
+  #decor .corner.br { bottom: 4px; right: 4px; transform: scale(-1, -1); }
+  #burst .flash { position: absolute; width: 20px; height: 20px; margin: -10px 0 0 -10px; border-radius: 50%; border: 2px solid var(--accent); box-shadow: 0 0 30px var(--accent), inset 0 0 20px var(--accent);
+    animation: kflash 1.2s cubic-bezier(.1, .7, .3, 1) forwards; }
+  @keyframes kflash { from { transform: scale(1); opacity: .9; } to { transform: scale(30); opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { #decor .godrays, #decor .mist, #decor .caus, #decor .tile.drift { animation: none !important; } }
+  /* ===== Kin: oro con relieve y un destello que recorre todo cada pocos segundos ===== */
+  html[data-pal="kin"] { --gold-grad: linear-gradient(115deg, #b8862a 0%, #e9c25a 22%, #f6d77a 38%, #fffbe6 48%, #f6d77a 58%, #e0b043 75%, #b8862a 100%); }
+  @keyframes kgold { 0%, 62% { background-position: 130% 0; } 100% { background-position: -30% 0; } }
+  html[data-pal="kin"] #decor .mark { color: transparent; background: linear-gradient(115deg, #5a3d08 0%, #b8862a 30%, #ffefb0 46%, #b8862a 60%, #5a3d08 100%);
+    background-size: 300% 100%; -webkit-background-clip: text; background-clip: text; text-shadow: none; opacity: .3;
+    filter: drop-shadow(-1px -1px 0 rgba(255, 236, 170, .55)) drop-shadow(2px 3px 2px rgba(0, 0, 0, .9)); animation: kgold 8s ease-in-out infinite; }
+  html[data-pal="kin"] #decor .sheen { inset: 0; background: linear-gradient(115deg, transparent 42%, rgba(255, 236, 160, .75) 50%, transparent 58%) no-repeat; background-size: 300% 100%; animation: kgold 8s ease-in-out infinite; }
+  html[data-pal="kin"] #decor .glint { background-size: contain; opacity: 0; animation: kglint ease-in-out infinite; filter: drop-shadow(0 0 4px rgba(255, 220, 120, .9)); }
+  @keyframes kglint { 0%, 80%, 100% { opacity: 0; transform: scale(.2) rotate(0deg); } 88% { opacity: 1; transform: scale(1) rotate(45deg); } }
+  html[data-pal="kin"] .kana, html[data-pal="kin"] .brand h1, html[data-pal="kin"] .today .jp, html[data-pal="kin"] .streak-hero .big {
+    color: #f6d77a; background: var(--gold-grad); background-size: 300% 100%; -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+    animation: kgold 8s ease-in-out infinite; }
+  html[data-pal="kin"] .kana { filter: drop-shadow(0 1px 0 #6e4b0a) drop-shadow(0 3px 6px rgba(0, 0, 0, .6)) drop-shadow(0 0 18px rgba(245, 200, 76, .25)); }
+  html[data-pal="kin"] .card::after, html[data-pal="kin"] .today::after { content: ""; position: absolute; inset: -1px; border-radius: inherit; padding: 1.5px; pointer-events: none;
+    background: linear-gradient(115deg, #6e4b0a 0%, #b8862a 25%, #fff4c2 48%, #b8862a 70%, #6e4b0a 100%); background-size: 300% 100%; animation: kgold 8s ease-in-out infinite;
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0); }
+  html[data-pal="kin"] .today { position: relative; }
+  html[data-pal="kin"] .card { box-shadow: 0 0 50px -12px rgba(245, 200, 76, .35), inset 0 1px 0 rgba(255, 240, 190, .12); }
+  html[data-pal="kin"] .streak-btn { color: #f6d77a; border-color: #b8862a; }
+  .pal .well { position: relative; }
+  .pal[data-id="kin"]:not(.locked) .md { position: relative; }
+  .pal[data-id="kin"]:not(.locked) .md::after { content: ""; position: absolute; inset: 0; -webkit-mask-image: var(--m); mask-image: var(--m); -webkit-mask-size: contain; mask-size: contain;
+    background: linear-gradient(115deg, transparent 40%, rgba(255, 255, 255, .9) 50%, transparent 60%) no-repeat; background-size: 300% 100%; animation: kgold 5s ease-in-out infinite; }
+  @media (prefers-reduced-motion: reduce) { html[data-pal="kin"] * { animation: none !important; } }
+  /* Matcha: polvo y hojas que caen solo por arriba, té líquido abajo */
+  #decor .sift { top: 0; will-change: transform; animation: ksift linear infinite; }
+  #decor .sift i { display: block; background-size: contain; background-repeat: no-repeat; animation: ksway ease-in-out infinite alternate; }
+  @keyframes ksift { 0% { transform: translate3d(0, -4vh, 0) rotate(0deg); opacity: 0; } 12% { opacity: var(--o); } 70% { opacity: calc(var(--o) * .6); } 100% { transform: translate3d(calc(var(--dx) * .4), 42vh, 0) rotate(var(--r)); opacity: 0; } }
+  #decor .dust { top: 0; left: 0; right: 0; height: 26vh; background:
+      radial-gradient(60% 70% at 30% 0%, rgba(140, 190, 70, .22), transparent 70%), radial-gradient(50% 60% at 80% 0%, rgba(160, 205, 90, .18), transparent 70%); animation: kmist 14s ease-in-out infinite alternate; }
+  #decor .tea-body { left: 0; right: 0; bottom: 0; height: 9vh; background: linear-gradient(180deg, #a9cf6a, #86b443 60%, #6f9e3a); opacity: .55; }
+  #decor .wave.tw1 { bottom: calc(9vh - 2px); opacity: .55; height: 60px; animation-duration: 14s; }
+  #decor .wave.tw2 { bottom: calc(9vh + 8px); opacity: .6; animation-duration: 21s; animation-direction: reverse; }
+  #decor .foam { bottom: calc(9vh + 18px); border-radius: 50%; background: rgba(255, 255, 255, .85); box-shadow: 0 0 3px rgba(255, 255, 255, .8); animation: kfoam ease-in-out infinite; }
+  @keyframes kfoam { 0%, 100% { transform: translateY(0) scale(.7); opacity: 0; } 30%, 70% { opacity: .9; } 50% { transform: translateY(-6px) scale(1); } }
+  @media (prefers-reduced-motion: reduce) { #decor .sift { display: none; } }
+  /* Cabecera */
+  .head-right { display: flex; gap: 8px; align-items: center; }
+  .streak-btn { appearance: none; background: none; border: 1px solid var(--hairline); color: var(--text-muted); height: 38px; padding: 0 12px 0 10px; border-radius: 999px; cursor: pointer;
+    display: flex; align-items: center; gap: 5px; font-size: 15px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .today { margin-bottom: 10px; }
+  .today .bar { height: 3px; background: var(--surface-raised); border-radius: 3px; overflow: hidden; margin-top: 6px; }
+  .today .bar > i { display: block; height: 100%; width: 0; background: var(--accent); transition: width .3s ease; }
+  .today.done .bar > i { background: var(--good); }
+
+  /* Ajustes */
+  .rem-row .switch { width: 46px; height: 28px; }
+  .rem-row .switch .track::after { width: 20px; height: 20px; }
+  .rem-row .switch input:checked + .track::after { transform: translateX(18px); }
+
+  /* Guía de pronunciación */
+  .guide-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin: 4px 0 6px; }
+  .guide-tabs button { appearance: none; border: 1px solid var(--hairline); background: var(--surface-raised); color: var(--text-muted); border-radius: var(--radius-sm); padding: 9px 0; font-size: 15px; font-weight: 700; cursor: pointer; }
+  .guide-tabs button.on { border-color: var(--accent); background: var(--accent-soft); color: var(--text); }
+  .gtable { display: grid; gap: 4px; }
+  .gtable.c5 { grid-template-columns: repeat(5, 1fr); }
+  .gtable.c3 { grid-template-columns: repeat(3, 1fr); }
+  .gcell { appearance: none; border: 1px solid transparent; background: var(--surface-raised); color: var(--text); border-radius: 10px; padding: 7px 0 5px; text-align: center; cursor: pointer; min-width: 0; font-family: inherit; }
+  .gcell b { display: block; font-size: 24px; font-weight: 500; line-height: 1.15; }
+  .gcell span { display: block; font-size: 11.5px; color: var(--text-muted); margin-top: 1px; }
+  .gcell.empty { background: none; cursor: default; }
+  .gcell.say { border-color: var(--accent); background: var(--accent-soft); }
+  .gcell .tip { color: var(--accent); }
+  .gtips { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+  .gtips li { background: var(--surface-raised); border-radius: var(--radius-sm); padding: 9px 12px; font-size: 13.5px; line-height: 1.5; color: var(--text-muted); }
+  .gtips li b { color: var(--text); }
+  .gtips li .jp { color: var(--accent); font-weight: 600; }
 </style>
 </head>
 <body>
@@ -189,8 +932,14 @@
       <img src="icons/icon-192.png" alt="">
       <h1>KanaMe <span>Kana</span></h1>
     </div>
-    <button class="icon-btn" id="soundBtn" aria-label="Sonido" title="Sonido"></button>
+    <div class="head-right">
+      <button class="streak-btn" id="streakBtn" aria-label="Racha de días"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c.6 3.4-1.2 5.3-2.8 7C7.6 10.7 6 12.5 6 15a6 6 0 0 0 12 0c0-2.2-1-4.1-2.3-5.6-.2 1.6-1 2.8-2.2 3.4.4-3.9-.4-7.6-1.5-10.8z"/></svg><span id="streakNum">0</span></button>
+      <button class="icon-btn" id="guideBtn" aria-label="Guía de pronunciación" title="Guía de pronunciación"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 5.5C4.5 4 7.5 4 10 5.5v14C7.5 18 4.5 18 2 19.5zM22 5.5C19.5 4 16.5 4 14 5.5v14c2.5-1.5 5.5-1.5 8 0z"/><path d="M10 5.5c.8-.6 1.4-.9 2-.9s1.2.3 2 .9"/></svg></button>
+      <button class="icon-btn" id="soundBtn" aria-label="Sonido" title="Sonido"></button>
+    </div>
   </header>
+
+  <button class="today" id="todayBtn"></button>
 
   <div class="sets" id="sets"></div>
 
@@ -239,6 +988,81 @@
     </div>
   </div>
 </div>
+
+<div class="sheet-backdrop" id="settings">
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="setTitle">
+    <h2 id="setTitle">Tu progreso</h2>
+    <p class="sub">Tu racha, tus medallas y el recordatorio diario.</p>
+    <h3>Racha y medallas</h3>
+    <div class="streak-hero" id="streakHero"></div>
+    <div class="palettes" id="palettes"></div>
+    <p class="note">Supera el reto de hoy (<b id="goalNote">30</b> aciertos en el día, en práctica libre o en el test) para sumar un día a tu racha. Si un día no lo superas, la racha vuelve a 0: las medallas que ya tienes se quedan, pero las nuevas se ganan con días seguidos contados desde 0 (la primera con 1 día, la segunda con 2 y después una cada 2 días: 4, 6, 8… hasta 18). Cada medalla trae su paleta, con su fondo y sus efectos. Toca una medalla para usar su paleta.</p>
+
+    <div id="remSection" hidden>
+      <h3>Recordatorio diario</h3>
+      <div class="rem-row">
+        <span><span class="t">Avisarme cada día</span><span class="s" id="remStatus"></span></span>
+        <span class="switch"><input type="checkbox" id="remToggle" aria-label="Recordatorio diario"><span class="track"></span></span>
+      </div>
+      <div class="rem-time" id="remTimeRow"><span>Hora del aviso</span><select class="time" id="remTime"></select></div>
+    </div>
+
+    <h3>Ayuda</h3>
+    <div class="row" style="margin-top:0"><button class="pill-btn ghost" id="tourAgain">Ver el tutorial otra vez</button></div>
+    <div class="row"><button class="pill-btn" id="closeSettings">Cerrar</button></div>
+  </div>
+</div>
+
+<div class="sheet-backdrop" id="guideSheet">
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="guideTitle">
+    <h2 id="guideTitle">Guía de pronunciación</h2>
+    <p class="sub" id="guideSub">Cada kana con su romaji.</p>
+    <div class="guide-tabs" id="guideTabs"></div>
+    <div id="guideBody"></div>
+    <div class="row"><button class="pill-btn" id="closeGuide">Cerrar</button></div>
+  </div>
+</div>
+
+<div class="sheet-backdrop" id="remSheet">
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="remTitle">
+    <div class="rem-hero">
+      <div class="bell">🔔</div>
+      <h2 id="remTitle">¿Te recordamos practicar cada día?</h2>
+      <p>Un aviso diario a la hora que elijas para hacer tu reto de kana. Si ese día ya lo has superado, no te molestamos.</p>
+      <div class="rem-pick"><span>Avisarme a las</span><select class="time" id="remTimeFirst"></select></div>
+    </div>
+    <div class="row">
+      <button class="pill-btn" id="remYes">Activar</button>
+      <button class="pill-btn ghost" id="remNo">Ahora no</button>
+    </div>
+    <p class="note" style="text-align:center">Puedes cambiar la hora o desactivarlo cuando quieras tocando 🔥.</p>
+  </div>
+</div>
+
+<div class="sheet-backdrop" id="introSheet">
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="introTitle">
+    <div class="intro-hero">
+      <div class="fire">🔥</div>
+      <h2 id="introTitle">¡Has empezado una racha!</h2>
+    </div>
+    <div class="intro-pal">
+      <span class="sw" id="introSwatch"></span>
+      <span><b id="introPalName">Nueva paleta: Shiro 白</b><span>La de siempre, con los blancos y los negros intercambiados.</span></span>
+    </div>
+    <ul class="intro-list">
+      <li><span class="ic">📅</span><span><b>Para seguir la racha</b>, supera cada día el reto de hoy: <b id="introGoal">30</b> aciertos, en práctica libre o en el test. Cada día seguido suma uno.</span></li>
+      <li><span class="ic">↺</span><span><b>Si un día no lo superas</b>, la racha vuelve a 0. Las medallas y paletas que ya tienes se quedan, pero para las nuevas tendrás que volver a sumar días seguidos desde 0.</span></li>
+      <li><span class="ic">🎨</span><span><b>Cada 2 días seguidos</b> ganas una medalla con una paleta nueva (colores, fondo y efectos): con 2 días, 4, 6, 8… hasta la última, a los 18 días.</span></li>
+      <li><span class="ic">⚙︎</span><span><b>Para cambiar de paleta</b>, toca el contador 🔥 de arriba a la derecha y elige una medalla.</span></li>
+    </ul>
+    <div class="row">
+      <button class="pill-btn" id="introPalettes">Ver medallas</button>
+      <button class="pill-btn ghost" id="introOk">Entendido</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <audio id="sndOk" src="audio/correct.mp3" preload="auto"></audio>
 <audio id="sndKo" src="audio/wrong.mp3" preload="auto"></audio>
@@ -411,6 +1235,7 @@
 
     if (ok) {
       correct++;
+      countCorrect();
       card.classList.add("ok");
       feedback.className = "feedback ok"; feedback.textContent = "Correcto";
     } else {
@@ -481,7 +1306,7 @@
     }
     $("retryFails").onclick = function () { closeSheet(); startTest(uniq); };
     endTest();
-    try { if (window.goatcounter && window.goatcounter.count) window.goatcounter.count({ path: "evento/test-terminado", title: "test-terminado", event: true }); } catch (e) {}
+    track("test-terminado"); if (nota === 10) track("test-perfecto");
     $("sheet").classList.add("open");
     answer.blur();
   }
@@ -505,8 +1330,400 @@
   });
   $("soundBtn").addEventListener("click", function () { prefs.sound = !prefs.sound; savePrefs(); renderSound(); });
 
+  // ================== RACHA, MEDALLAS, RECORDATORIO, GUÍA Y TUTORIAL ==================
+  // Mismo sistema que KanaMe Kanji, con datos propios (claves «kaname-kana.*»: las dos apps comparten dominio).
+  var DAILY_GOAL = 30;                        // aciertos al día para superar el reto
+  var STREAK_KEY = "kaname-kana.streak.v1";   // { cur, best, last: "AAAA-MM-DD" }
+  var TODAY_KEY = "kaname-kana.today.v1";     // { date, n }
+  var PALETTE_KEY = "kaname-kana.palette.v1";
+  var INTRO_KEY = "kaname-kana.streakIntro.v1";
+  var TOUR_KEY = "kaname-kana.tour.v1";
+  var REM_KEY = "kaname-kana.reminder.v1";
+  var PALETTES = window.KANAME_PALETTES || [];
+  function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+  function lsSet(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+  function parse(s) { try { return JSON.parse(s); } catch (e) { return null; } }
+  function pad(n) { return (n < 10 ? "0" : "") + n; }
+  function dayStr(d) { d = d || new Date(); return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate()); }
+  function yesterdayStr() { var d = new Date(); d.setDate(d.getDate() - 1); return dayStr(d); }
+  function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+  function track(name) {
+    try { if (window.goatcounter && window.goatcounter.count) window.goatcounter.count({ path: "evento/kana-" + name, title: "kana-" + name, event: true }); } catch (e) {}
+  }
+  function toast(msg) { var t = $("toast"); t.textContent = msg; t.classList.add("show"); clearTimeout(toast.t); toast.t = setTimeout(function () { t.classList.remove("show"); }, 2400); }
+
+  // Copia en IndexedDB para que el service worker pueda leer la racha al componer el aviso
+  function idbSet(key, val) {
+    try {
+      var rq = indexedDB.open("kaname-kana", 1);
+      rq.onupgradeneeded = function () { rq.result.createObjectStore("kv"); };
+      rq.onsuccess = function () { try { rq.result.transaction("kv", "readwrite").objectStore("kv").put(val, key); } catch (e) {} };
+    } catch (e) {}
+  }
+
+  var streak = parse(lsGet(STREAK_KEY)) || { cur: 0, best: 0, last: "" };
+  var today = parse(lsGet(TODAY_KEY)) || {};
+  if (today.date !== dayStr()) today = { date: dayStr(), n: 0 };
+  function saveStreak() { var s = JSON.stringify(streak); lsSet(STREAK_KEY, s); idbSet(STREAK_KEY, s); }
+  function saveToday() { lsSet(TODAY_KEY, JSON.stringify(today)); }
+  function currentStreak() { return (streak.last === dayStr() || streak.last === yesterdayStr()) ? streak.cur : 0; }
+  function unlocked(p) { return streak.best >= p.days; }
+  function setPalette(id) { lsSet(PALETTE_KEY, id); if (window.applyKanamePalette) window.applyKanamePalette(id); }
+
+  function renderToday() {
+    if (today.date !== dayStr()) { today = { date: dayStr(), n: 0 }; saveToday(); }
+    var done = streak.last === dayStr(), n = Math.min(today.n, DAILY_GOAL), b = $("todayBtn");
+    b.classList.toggle("done", done);
+    b.innerHTML = "";
+    b.appendChild(el("span", "jp", "今日"));
+    var tx = el("span", "txt");
+    tx.appendChild(el("span", "t", "Reto de hoy"));
+    tx.appendChild(el("span", "s", done ? "Superado · sigue practicando si quieres" : "Acierta " + DAILY_GOAL + " kana hoy para sumar a tu racha"));
+    var bar = el("span", "bar"), fill = el("i"); fill.style.width = (done ? 100 : n / DAILY_GOAL * 100) + "%"; bar.appendChild(fill); tx.appendChild(bar);
+    b.appendChild(tx);
+    b.appendChild(el("span", "right", done ? "✓ " + DAILY_GOAL + "/" + DAILY_GOAL : n + "/" + DAILY_GOAL));
+  }
+  function renderStreak() {
+    var cur = currentStreak();
+    $("streakNum").textContent = cur;
+    $("streakBtn").classList.toggle("on", streak.last === dayStr());
+    $("streakBtn").setAttribute("aria-label", "Racha: " + cur + (cur === 1 ? " día" : " días"));
+  }
+  // Se llama con cada acierto
+  function countCorrect() {
+    if (today.date !== dayStr()) today = { date: dayStr(), n: 0 };
+    today.n++; saveToday();
+    if (window.kanameBurst) window.kanameBurst(false, card);
+    if (today.n >= DAILY_GOAL) checkDayComplete();
+    renderToday();
+  }
+  function checkDayComplete() {
+    var d = dayStr();
+    if (streak.last === d) return;
+    var before = streak.best;
+    streak.cur = (streak.last === yesterdayStr()) ? streak.cur + 1 : 1;
+    streak.best = Math.max(streak.best, streak.cur);
+    streak.last = d;
+    saveStreak();
+    track("dia-completado");
+    reminderDone();
+    var nuevas = PALETTES.filter(function (p) { return p.days > before && p.days <= streak.best; });
+    answer.blur();
+    if (nuevas.length) {
+      var p = nuevas[nuevas.length - 1];
+      setPalette(p.id);
+      showMedal(p, p.id === "shiro" ? showStreakIntro : null);
+    } else {
+      if (window.kanameBurst) window.kanameBurst(true);
+      toast("🔥 ¡Reto superado! Racha: " + streak.cur + (streak.cur === 1 ? " día" : " días"));
+    }
+    renderStreak(); renderToday();
+  }
+
+  // Animación de la medalla nueva
+  function showMedal(p, after) {
+    var box = $("medalReveal");
+    if (!box) { box = el("div", "medal-reveal"); box.id = "medalReveal"; box.setAttribute("role", "dialog"); box.setAttribute("aria-modal", "true"); document.body.appendChild(box); }
+    box.innerHTML = "";
+    var stage = el("div", "medal-stage"); stage.appendChild(el("div", "medal-rays"));
+    var big = el("div", "medal-big"), url = window.KANAME_MEDAL(p.id);
+    big.style.backgroundImage = url; big.style.setProperty("--m", url);
+    stage.appendChild(big); box.appendChild(stage);
+    box.appendChild(el("div", "kicker", p.days === 1 ? "Primer día de racha" : p.days + " días seguidos"));
+    var h = el("h2"); h.appendChild(el("span", null, p.jp)); h.appendChild(document.createTextNode("Medalla " + p.name)); box.appendChild(h);
+    box.appendChild(el("p", null, "Has desbloqueado la paleta " + p.name + ". Ya la llevas puesta; puedes cambiarla cuando quieras en tu medallero (toca 🔥)."));
+    var btn = el("button", "pill-btn", "¡Genial!"); box.appendChild(btn);
+    btn.onclick = function () { box.classList.remove("open"); if (after) after(); };
+    box.classList.add("open");
+    track("medalla-" + p.id);
+    setTimeout(function () { if (window.kanameBurst) window.kanameBurst(true, big); }, 1150);
+  }
+  function showStreakIntro() {
+    var p = PALETTES.filter(function (x) { return x.id === "shiro"; })[0];
+    if (!p) return;
+    lsSet(INTRO_KEY, "1");
+    var sw = $("introSwatch"); sw.style.background = p.accent; sw.style.boxShadow = "inset 0 0 0 7px " + p.bg + ", 0 0 0 1px " + p.hairline;
+    $("remSheet").classList.remove("open");
+    $("introSheet").classList.add("open");
+  }
+  function maybeShowStreakIntro() {
+    var p = PALETTES.filter(function (x) { return x.id === "shiro"; })[0];
+    if (p && unlocked(p) && !lsGet(INTRO_KEY)) { showStreakIntro(); return true; }
+    return false;
+  }
+  $("introOk").onclick = function () { $("introSheet").classList.remove("open"); maybeAskReminder(); };
+  $("introPalettes").onclick = function () { $("introSheet").classList.remove("open"); openSettings(); };
+
+  function renderStreakSheet() {
+    var cur = currentStreak(), next = PALETTES.filter(function (p) { return p.days > streak.best; })[0];
+    var h = $("streakHero"); h.innerHTML = "";
+    var big = el("div", "big", String(cur)); big.appendChild(el("small", null, cur === 1 ? "día" : "días"));
+    h.appendChild(big);
+    var info = el("div", "info");
+    info.appendChild(document.createTextNode("Mejor racha: ")); info.appendChild(el("b", null, streak.best + (streak.best === 1 ? " día" : " días")));
+    info.appendChild(el("br"));
+    info.appendChild(document.createTextNode(next ? "Siguiente medalla (" + next.name + ") con " + next.days + (next.days === 1 ? " día" : " días seguidos") + "." : "¡Tienes todas las medallas!"));
+    h.appendChild(info);
+    var box = $("palettes"); box.innerHTML = "";
+    var sel = lsGet(PALETTE_KEY) || "sumi";
+    PALETTES.forEach(function (p) {
+      var ok = unlocked(p);
+      var b = el("button", "pal" + (p.id === sel ? " sel" : "") + (ok ? "" : " locked"));
+      b.dataset.id = p.id;
+      var well = el("span", "well"), md = el("span", "md"), murl = window.KANAME_MEDAL(p.id);
+      md.style.backgroundImage = murl; md.style.setProperty("--m", murl);
+      well.appendChild(md); b.appendChild(well);
+      var nm = el("span", "nm");
+      if (ok) { nm.appendChild(el("b", null, p.jp)); nm.appendChild(document.createTextNode(p.name)); }
+      else nm.textContent = p.days + (p.days === 1 ? " día" : " días");
+      b.appendChild(nm);
+      b.setAttribute("aria-label", p.name + (ok ? "" : ", se desbloquea con " + p.days + (p.days === 1 ? " día" : " días seguidos")));
+      b.onclick = function () {
+        if (!ok) { toast(p.days === 1 ? "Se desbloquea al superar tu primer reto" : "Se desbloquea con " + p.days + " días seguidos"); return; }
+        setPalette(p.id); renderStreakSheet();
+      };
+      box.appendChild(b);
+    });
+  }
+  function openSettings() { renderStreakSheet(); renderReminder(); $("settings").classList.add("open"); answer.blur(); }
+  $("streakBtn").onclick = openSettings;
+  $("closeSettings").onclick = function () { $("settings").classList.remove("open"); };
+  $("settings").addEventListener("click", function (e) { if (e.target === this) this.classList.remove("open"); });
+  $("todayBtn").onclick = function () { $("todayBtn").blur(); answer.focus(); };
+
+  // ---------- Recordatorio diario (Web Push, mismo servidor que KanaMe Kanji) ----------
+  var PUSH_URL = "https://kaname-push.lucassuarez1605.workers.dev";
+  var rem = parse(lsGet(REM_KEY)) || {};
+  var isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  var standalone = (window.matchMedia && matchMedia("(display-mode: standalone)").matches) || navigator.standalone === true;
+  function pushSupported() { return !!PUSH_URL && "serviceWorker" in navigator && "PushManager" in window && "Notification" in window; }
+  function saveRem() { lsSet(REM_KEY, JSON.stringify(rem)); }
+  function remTime() { return rem.time || "20:00"; }
+  function utcSlot(time) { var hm = time.split(":"), d = new Date(); d.setHours(+hm[0], +hm[1], 0, 0); return pad(d.getUTCHours()) + pad(d.getUTCMinutes()); }
+  function newId() { try { if (crypto.randomUUID) return crypto.randomUUID(); } catch (e) {} return "k" + Date.now().toString(36) + Math.random().toString(36).slice(2, 12); }
+  function b64ToBytes(s) { s = s.replace(/-/g, "+").replace(/_/g, "/"); while (s.length % 4) s += "="; var bin = atob(s), out = new Uint8Array(bin.length); for (var i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i); return out; }
+  function api(path, body) {
+    return fetch(PUSH_URL + path, body ? { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) } : {})
+      .then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); });
+  }
+  function fillTimes(sel) {
+    if (sel.options.length) { sel.value = remTime(); return; }
+    for (var h = 0; h < 24; h++) for (var m = 0; m < 60; m += 15) { var v = pad(h) + ":" + pad(m), o = document.createElement("option"); o.value = v; o.textContent = v; sel.appendChild(o); }
+    sel.value = remTime();
+  }
+  function enableReminder(time, ask) {
+    var perm = ask && Notification.permission === "default" ? Notification.requestPermission() : Promise.resolve(Notification.permission);
+    return Promise.resolve(perm).then(function (p) {
+      if (p !== "granted") throw new Error("permiso");
+      return navigator.serviceWorker.ready;
+    }).then(function (reg) {
+      return reg.pushManager.getSubscription().then(function (sub) {
+        if (sub) return sub;
+        return api("/key").then(function (k) { return reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64ToBytes(k.publicKey) }); });
+      });
+    }).then(function (sub) {
+      var slot = utcSlot(time), id = rem.id || newId();
+      return api("/subscribe", { id: id, app: "kana", sub: sub.toJSON(), slot: slot, prevSlot: rem.slot || "", off: new Date().getTimezoneOffset(), done: streak.last === dayStr() ? dayStr() : "" })
+        .then(function () { rem = { state: "on", time: time, id: id, slot: slot }; saveRem(); track("recordatorio-activado"); });
+    });
+  }
+  function disableReminder() {
+    var old = rem; rem = { state: "off", time: remTime() }; saveRem();
+    if (old.id && old.slot) api("/unsubscribe", { id: old.id, slot: old.slot }).catch(function () {});
+    if ("serviceWorker" in navigator) navigator.serviceWorker.ready.then(function (reg) { return reg.pushManager.getSubscription(); }).then(function (s) { if (s) s.unsubscribe(); }).catch(function () {});
+    track("recordatorio-desactivado");
+  }
+  function reminderError(e) {
+    var msg = e && e.message === "permiso" ? "Has bloqueado las notificaciones. Actívalas en los ajustes del navegador o del móvil." : "No se pudo activar el recordatorio. Inténtalo con conexión.";
+    rem.state = "off"; saveRem(); renderReminder(); toast(msg);
+  }
+  function syncReminder() {
+    if (!pushSupported() || rem.state !== "on") return;
+    if (Notification.permission !== "granted") { rem.state = "off"; saveRem(); return; }
+    navigator.serviceWorker.ready.then(function (reg) { return reg.pushManager.getSubscription(); }).then(function (sub) {
+      if (!sub || utcSlot(remTime()) !== rem.slot) return enableReminder(remTime(), false);
+    }).catch(function () {});
+  }
+  function reminderDone() { if (rem.state === "on" && rem.id && PUSH_URL) api("/done", { id: rem.id, slot: rem.slot, date: dayStr() }).catch(function () {}); }
+  function renderReminder() {
+    var sec = $("remSection"), iosTab = isIOS && !standalone;
+    sec.hidden = !PUSH_URL || !(pushSupported() || iosTab);
+    if (sec.hidden) return;
+    var on = rem.state === "on";
+    $("remToggle").checked = on; $("remToggle").disabled = iosTab;
+    fillTimes($("remTime")); $("remTimeRow").style.display = on ? "" : "none";
+    $("remStatus").textContent = iosTab ? "En iPhone, primero añade KanaMe Kana a la pantalla de inicio."
+      : on ? "Te avisaremos a las " + remTime() + " si aún no has superado el reto del día."
+      : Notification.permission === "denied" ? "Notificaciones bloqueadas en los ajustes del móvil." : "Desactivado";
+  }
+  function anySheetOpen() { return tour || ["sheet", "settings", "guideSheet", "introSheet", "remSheet"].some(function (id) { return $(id).classList.contains("open"); }) || !!document.querySelector(".medal-reveal.open"); }
+  function maybeAskReminder() {
+    if (!pushSupported() || rem.state || Notification.permission === "denied") return;
+    setTimeout(function () {
+      if (anySheetOpen()) return;
+      fillTimes($("remTimeFirst")); answer.blur();
+      $("remSheet").classList.add("open");
+    }, 1200);
+  }
+  $("remYes").onclick = function () {
+    var t = $("remTimeFirst").value, btn = this;
+    btn.disabled = true;
+    enableReminder(t, true).then(function () { $("remSheet").classList.remove("open"); toast("🔔 Recordatorio activado a las " + t); })
+      .catch(function (e) { $("remSheet").classList.remove("open"); reminderError(e); })
+      .then(function () { btn.disabled = false; });
+  };
+  $("remNo").onclick = function () { rem = { state: "off", time: remTime() }; saveRem(); $("remSheet").classList.remove("open"); };
+  $("remToggle").onchange = function () {
+    if (this.checked) enableReminder($("remTime").value || remTime(), true).then(function () { renderReminder(); toast("🔔 Recordatorio activado a las " + remTime()); }).catch(reminderError);
+    else { disableReminder(); renderReminder(); }
+  };
+  $("remTime").onchange = function () { var t = this.value; enableReminder(t, false).then(function () { renderReminder(); toast("Te avisaremos a las " + t); }).catch(reminderError); };
+
+  // ---------- Guía de pronunciación ----------
+  var GUIDE_KEY = "kaname-kana.guide.v1";
+  var guideScript = lsGet(GUIDE_KEY) === "kata" ? "kata" : "hira";
+  var ROWS = [
+    ["あ", "い", "う", "え", "お"], ["か", "き", "く", "け", "こ"], ["さ", "し", "す", "せ", "そ"], ["た", "ち", "つ", "て", "と"],
+    ["な", "に", "ぬ", "ね", "の"], ["は", "ひ", "ふ", "へ", "ほ"], ["ま", "み", "む", "め", "も"], ["や", "", "ゆ", "", "よ"],
+    ["ら", "り", "る", "れ", "ろ"], ["わ", "", "", "", "を"], ["ん", "", "", "", ""]
+  ];
+  var ROWS_TEN = [["が", "ぎ", "ぐ", "げ", "ご"], ["ざ", "じ", "ず", "ぜ", "ぞ"], ["だ", "ぢ", "づ", "で", "ど"], ["ば", "び", "ぶ", "べ", "ぼ"], ["ぱ", "ぴ", "ぷ", "ぺ", "ぽ"]];
+  var ROWS_COMBO = [["きゃ", "きゅ", "きょ"], ["しゃ", "しゅ", "しょ"], ["ちゃ", "ちゅ", "ちょ"], ["にゃ", "にゅ", "にょ"], ["ひゃ", "ひゅ", "ひょ"], ["みゃ", "みゅ", "みょ"], ["りゃ", "りゅ", "りょ"],
+    ["ぎゃ", "ぎゅ", "ぎょ"], ["じゃ", "じゅ", "じょ"], ["びゃ", "びゅ", "びょ"], ["ぴゃ", "ぴゅ", "ぴょ"]];
+  var EXTRA_ROMAJI = { "ぢ": "ji (dji)", "づ": "zu (dzu)" };
+  var SPECIAL = { "し": 1, "ち": 1, "つ": 1, "ふ": 1, "ん": 1, "を": 1, "じ": 1, "ず": 1, "ら": 1, "り": 1, "る": 1, "れ": 1, "ろ": 1 };
+  var TIPS = [
+    ["あいうえお", "<b>Vocales</b>: como en español. La <b>u</b> se dice sin redondear los labios y, entre consonantes como k, s o t, casi no se oye: です suena «des»."],
+    ["らりるれろ", "<b>R</b>: siempre suave, como la r de «pero», nunca como «perro». A veces se acerca un poco a una l."],
+    ["し・ち・つ", "<b>し shi</b> se dice con «sh» suave; <b>ち chi</b> como la «ch» de «chico»; <b>つ tsu</b> con t y s juntas, como en «tsunami»."],
+    ["ふ", "<b>ふ fu</b>: soplando entre los labios casi cerrados, sin tocar los dientes. Está entre una f y una j muy suave."],
+    ["はひへほ", "<b>H</b>: aspirada y suave, como la h inglesa de «hello». Más suave que la j española."],
+    ["じ・ず", "<b>じ ji</b> es una «y» fuerte o la j inglesa de «jeans», no la j española. <b>ず zu</b> es una z sonora, como «ds»."],
+    ["が・ぎ", "<b>G</b>: siempre como en «gato»: ぎ suena «gui» y げ suena «gue»."],
+    ["ん", "<b>ん n</b>: una n que vale una sílaba entera. Antes de p, b o m suena m: さんぽ «sampo»."],
+    ["を・は・へ", "<b>を</b> se lee «o». Como partícula, <b>は</b> se lee «wa» y <b>へ</b> se lee «e»."],
+    ["っ", "<b>っ pequeña</b>: una pausa corta que dobla la consonante siguiente: きって «kit-te»."],
+    ["ー・おう", "<b>Vocales largas</b>: duran el doble. En katakana se marcan con ー (コーヒー «kōhī»); en hiragana, por ejemplo, con おう o えい."],
+    ["きゃ", "<b>Combinados</b>: son una sola sílaba rápida, no dos: きゃ es «kya» (casi «kia» de un golpe)."]
+  ];
+  var canSpeak = "speechSynthesis" in window && typeof SpeechSynthesisUtterance !== "undefined";
+  function speak(txt) {
+    if (!canSpeak) return;
+    try { speechSynthesis.cancel(); var u = new SpeechSynthesisUtterance(txt); u.lang = "ja-JP"; u.rate = .8; speechSynthesis.speak(u); } catch (e) {}
+  }
+  function romajiOf(h) { return EXTRA_ROMAJI[h] || BASE[h] || COMBO[h] || ""; }
+  function guideTable(rows, cols) {
+    var conv = guideScript === "kata" ? toKatakana : function (s) { return s; };
+    var g = el("div", "gtable c" + cols);
+    rows.forEach(function (r) {
+      r.forEach(function (h) {
+        if (!h) { g.appendChild(el("span", "gcell empty")); return; }
+        var b = el("button", "gcell"), k = conv(h);
+        b.appendChild(el("b", null, k));
+        var rs = el("span", SPECIAL[h] ? "tip" : null, romajiOf(h)); b.appendChild(rs);
+        b.setAttribute("aria-label", k + ", " + romajiOf(h));
+        b.onclick = function () {
+          [].forEach.call(document.querySelectorAll(".gcell.say"), function (x) { x.classList.remove("say"); });
+          b.classList.add("say"); speak(k);
+        };
+        g.appendChild(b);
+      });
+    });
+    return g;
+  }
+  function renderGuide() {
+    var tabs = $("guideTabs"); tabs.innerHTML = "";
+    SCRIPTS.forEach(function (sc) {
+      var b = el("button", sc.id === guideScript ? "on" : null, sc.label + " " + sc.name);
+      b.onclick = function () { guideScript = sc.id; lsSet(GUIDE_KEY, sc.id); renderGuide(); $("guideBody").scrollIntoView({ block: "nearest" }); };
+      tabs.appendChild(b);
+    });
+    $("guideSub").textContent = (canSpeak ? "Toca un kana para oírlo. " : "") + "En color, los que no se pronuncian como parece. Más abajo tienes los trucos de pronunciación.";
+    var body = $("guideBody"); body.innerHTML = "";
+    body.appendChild(el("h3", null, "Básicos"));
+    body.appendChild(guideTable(ROWS, 5));
+    body.appendChild(el("h3", null, "Con tenten ゛ y maru ゜"));
+    body.appendChild(guideTable(ROWS_TEN, 5));
+    body.appendChild(el("h3", null, "Combinados"));
+    body.appendChild(guideTable(ROWS_COMBO, 3));
+    body.appendChild(el("h3", null, "Cómo se pronuncian (para hispanohablantes)"));
+    var ul = el("ul", "gtips");
+    TIPS.forEach(function (t) {
+      var li = el("li"), jp = el("span", "jp", t[0] + " · "); li.appendChild(jp);
+      var sp = el("span"); sp.innerHTML = t[1]; li.appendChild(sp); ul.appendChild(li);
+    });
+    body.appendChild(ul);
+  }
+  function openGuide() { renderGuide(); answer.blur(); $("guideSheet").classList.add("open"); $("guideSheet").querySelector(".sheet").scrollTop = 0; track("guia-abierta-" + guideScript); }
+  $("guideBtn").onclick = openGuide;
+  $("closeGuide").onclick = function () { $("guideSheet").classList.remove("open"); };
+  $("guideSheet").addEventListener("click", function (e) { if (e.target === this) this.classList.remove("open"); });
+
+  // ---------- Tutorial de la primera vez ----------
+  var tour = null;
+  function tourSteps() {
+    return [
+      { el: "card", t: "Lee el kana", h: "Aquí aparece un kana. <b>Escribe su romaji</b> abajo (por ejemplo <b>ka</b> para か) y pulsa <b>Enviar</b>. Si fallas, verás la respuesta correcta." },
+      { el: "sets", t: "Hiragana y katakana", h: "Elige qué practicar: <b>あ hiragana</b>, <b>ア katakana</b> o los dos. Con los interruptores de debajo añades los <b>combinados</b> o quitas los kana con tenten." },
+      { el: "todayBtn", t: "Reto de hoy", h: "Cada día, acierta <b>" + DAILY_GOAL + " kana</b> (en práctica libre o en el test) para sumar un día a tu <b>racha 🔥</b>." },
+      { el: "testBtn", t: "Modo test", h: "Te pregunta todos los kana elegidos una sola vez y al final te da una <b>nota sobre 10</b> con tus fallos, para repasarlos." },
+      { el: "guideBtn", t: "Guía de pronunciación", h: "La tabla de todos los kana con su romaji, por separado para <b>hiragana</b> y <b>katakana</b>, y trucos para pronunciarlos bien." + (canSpeak ? " Toca un kana para oírlo." : "") },
+      { el: "streakBtn", t: "Racha y medallas", h: "Tu racha de días seguidos. Tócala para ver tus <b>medallas</b>, cambiar de <b>paleta de colores</b> y activar el <b>recordatorio diario</b>. ¡A practicar!" }
+    ];
+  }
+  function startTour(done) {
+    if (tour) return;
+    answer.blur();
+    var steps = tourSteps(), i = 0;
+    var root = el("div", "tour"), hole = el("div", "tour-hole"), bub = el("div", "tour-bubble");
+    root.setAttribute("role", "dialog"); root.setAttribute("aria-modal", "true"); root.setAttribute("aria-label", "Cómo funciona KanaMe Kana");
+    root.appendChild(hole); root.appendChild(bub); document.body.appendChild(root);
+    tour = { root: root };
+    function finish() {
+      lsSet(TOUR_KEY, "1");
+      window.removeEventListener("resize", place);
+      root.remove(); tour = null;
+      track("tutorial-" + (i >= steps.length - 1 ? "completado" : "saltado"));
+      if (done) done();
+    }
+    function place() {
+      var s = steps[i], t = $(s.el); if (!t) return;
+      var r = t.getBoundingClientRect(), pd = 6, vw = window.innerWidth, vh = window.innerHeight;
+      hole.style.top = (r.top - pd) + "px"; hole.style.left = (r.left - pd) + "px";
+      hole.style.width = (r.width + pd * 2) + "px"; hole.style.height = (r.height + pd * 2) + "px";
+      var w = Math.min(360, vw - 24); bub.style.width = w + "px";
+      bub.style.left = Math.max(12, Math.min(vw - w - 12, r.left + r.width / 2 - w / 2)) + "px";
+      var bh = bub.offsetHeight, below = r.bottom + pd + 12, above = r.top - pd - 12 - bh;
+      bub.style.top = (below + bh <= vh - 12 ? below : above >= 12 ? above : Math.max(12, vh - bh - 12)) + "px";
+    }
+    function show() {
+      var s = steps[i];
+      bub.innerHTML = "";
+      bub.appendChild(el("h4", null, s.t));
+      var p = el("p"); p.innerHTML = s.h; bub.appendChild(p);
+      var nav = el("div", "tour-nav"), dots = el("div", "tour-dots");
+      steps.forEach(function (_, j) { dots.appendChild(el("i", j === i ? "on" : "")); });
+      nav.appendChild(dots);
+      var last = i === steps.length - 1;
+      if (!last) { var sk = el("button", "tour-skip", "Saltar"); sk.onclick = finish; nav.appendChild(sk); }
+      var nx = el("button", "pill-btn tour-next", last ? "¡Empezar!" : "Siguiente");
+      nx.onclick = function () { if (last) finish(); else { i++; show(); } };
+      nav.appendChild(nx);
+      bub.appendChild(nav);
+      place(); nx.focus();
+    }
+    window.addEventListener("resize", place);
+    show();
+  }
+  $("tourAgain").onclick = function () { $("settings").classList.remove("open"); setTimeout(function () { startTour(); }, 250); };
+
   // Inicio
   renderSets(); renderSound(); updateStats(); randomChar();
+  renderToday(); renderStreak();
+  setInterval(function () { if (today.date !== dayStr()) { renderToday(); renderStreak(); } }, 60000);
+  syncReminder();
+  var afterTour = function () { if (!maybeShowStreakIntro()) maybeAskReminder(); };
+  if (!lsGet(TOUR_KEY)) setTimeout(function () { startTour(afterTour); }, 500); else afterTour();
 
   if ("serviceWorker" in navigator && location.protocol === "https:") {
     navigator.serviceWorker.register("sw.js").catch(function () {});
