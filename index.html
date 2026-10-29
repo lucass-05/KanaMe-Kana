@@ -1370,8 +1370,8 @@
 })();
 </script>
 <script>
-  // En KanaMe Kana las medallas llegan antes (el kana se aprende en pocas semanas): 1, 2, 4 y desde el día 5 casi una cada día, hasta Kin a los 26
-  (function () { var D = { sumi: 0, shiro: 1, sakura: 2, matcha: 4, inari: 5, koi: 6, ajisai: 7, hasu: 8, edo: 10, hanabi: 11, kaguya: 12, daruma: 13, fuji: 14, onsen: 15, fujisan: 16, matsuri: 17, yuki: 18, maneki: 19, umi: 20, tanabata: 21, momiji: 22, ryu: 23, yoru: 24, kin: 26 };
+  // En KanaMe Kana las medallas llegan antes (el kana se aprende en pocas semanas): 1, 2 y luego cada 2 días hasta Kin, a los 44
+  (function () { var D = { sumi: 0, shiro: 1, sakura: 2, matcha: 4, inari: 6, koi: 8, ajisai: 10, hasu: 12, edo: 14, hanabi: 16, kaguya: 18, daruma: 20, fuji: 22, onsen: 24, fujisan: 26, matsuri: 28, yuki: 30, maneki: 32, umi: 34, tanabata: 36, momiji: 38, ryu: 40, yoru: 42, kin: 44 };
     (window.KANAME_PALETTES || []).forEach(function (p) { if (p.id in D) p.days = D[p.id]; }); })();
 </script>
 
@@ -2071,7 +2071,7 @@
     <ul class="intro-list">
       <li><span class="ic">📅</span><span><b>Para seguir la racha</b>, supera cada día el reto de hoy: <b id="introGoal">10</b> aciertos, en práctica libre o en el test. Cada día seguido suma uno.</span></li>
       <li><span class="ic">↺</span><span><b>Si un día no lo superas</b>, la racha vuelve a 0. Las medallas y paletas que ya tienes se quedan, pero para las nuevas tendrás que volver a sumar días seguidos desde 0.</span></li>
-      <li><span class="ic">🎨</span><span><b>Ganas medallas</b> con una paleta nueva (colores, fondo y efectos) a los 1, 2 y 4 días seguidos, y desde el día 5 casi una cada día, hasta la última, a los 26 días.</span></li>
+      <li><span class="ic">🎨</span><span><b>Cada 2 días seguidos</b> ganas una medalla con una paleta nueva (colores, fondo y efectos): con 2 días, 4, 6, 8… hasta la última, a los 44 días.</span></li>
       <li><span class="ic">⚙︎</span><span><b>Para cambiar de paleta</b>, toca el contador 🔥 de arriba a la derecha y elige una medalla.</span></li>
     </ul>
     <div class="row">
