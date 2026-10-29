@@ -45,7 +45,7 @@ Se aceptan tanto la romanización Hepburn como las variantes más habituales: *s
 ## Racha, medallas y guía
 
 - **Reto de hoy.** Elige tu reto: acertar 5, 10 o 20 kana al día (en práctica libre o en el test) para sumar un día a tu **racha 🔥**.
-- **Medallas y paletas.** El primer día ganas la medalla 白 Shiro, el segundo 桜 Sakura y después una cada 2 días hasta 金 Kin (24 días). Cada medalla trae su paleta de colores, con fondo y efectos propios; la de 江戸 Edo cambia además la letra a pincel.
+- **Medallas y paletas.** El primer día ganas la medalla 白 Shiro, el segundo 桜 Sakura y después una cada 2 días hasta 金 Kin (26 días). Cada medalla trae su paleta de colores, con fondo y efectos propios; las de 江戸 Edo y かぐや Kaguya cambian además la letra a pincel.
 - **Guía de pronunciación.** La tabla de todos los kana con su romaji, por separado para hiragana y katakana, con trucos de pronunciación para hispanohablantes. Toca un kana para oírlo.
 - **Recordatorio diario.** Un aviso a la hora que elijas si aún no has superado el reto del día.
 
@@ -60,7 +60,7 @@ Se aceptan tanto la romanización Hepburn como las variantes más habituales: *s
 
 ## Medallas y paletas
 
-<p align="center"><img src="docs/paletas.png" alt="Las 14 medallas y paletas de KanaMe Kana con los días de racha que piden" width="100%"></p>
+<p align="center"><img src="docs/paletas.png" alt="Las 15 medallas y paletas de KanaMe Kana con los días de racha que piden" width="100%"></p>
 
 ## Instalar en el móvil
 
