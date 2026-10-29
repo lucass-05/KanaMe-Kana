@@ -943,6 +943,37 @@
   .gtips li b { color: var(--text); }
   .gtips li .jp { color: var(--accent); font-weight: 600; }
   .gtips li .jp .kj { font-weight: 500; }
+  /* Guía para añadir la app a la pantalla de inicio */
+  .inst-hero { text-align: center; padding: 2px 0 10px; }
+  .inst-hero .ic { font-size: 40px; line-height: 1; margin-bottom: 8px; }
+  .inst-hero h2 { margin: 0 0 6px; font-size: 20px; }
+  .inst-hero p { margin: 0 auto; font-size: 13.5px; color: var(--text-muted); line-height: 1.5; max-width: 340px; }
+  .inst-tabs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin: 10px 0 10px; }
+  .inst-tabs button { appearance: none; border: 1px solid var(--hairline); background: var(--surface-raised); color: var(--text-muted); border-radius: var(--radius-sm); padding: 9px 0; font-size: 14px; font-weight: 700; cursor: pointer; font-family: inherit; }
+  .inst-tabs button.on { border-color: var(--accent); background: var(--accent-soft); color: var(--text); }
+  .inst-now { width: 100%; margin-bottom: 10px; }
+  .inst-warn { font-size: 12.5px; line-height: 1.45; color: var(--text); background: var(--accent-soft); border: 1px solid var(--accent); border-radius: var(--radius-sm); padding: 9px 12px; margin-bottom: 10px; }
+  .inst-steps { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+  .inst-step { display: grid; grid-template-columns: 30px 1fr 112px; gap: 10px; align-items: center; background: var(--surface-raised); border-radius: var(--radius-md); padding: 10px 10px 10px 12px; }
+  .inst-step .n { width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid var(--accent); color: var(--accent); display: grid; place-items: center; font-weight: 800; font-size: 14px; }
+  .inst-step b { display: block; font-size: 14.5px; margin-bottom: 2px; }
+  .inst-step span { display: block; font-size: 12.5px; color: var(--text-muted); line-height: 1.4; }
+  .inst-step span em { font-style: normal; color: var(--accent); font-weight: 600; }
+  .inst-step small { display: block; font-size: 11.5px; color: var(--text-faint); margin-top: 3px; line-height: 1.35; }
+  @media (max-width: 370px) { .inst-step { grid-template-columns: 26px 1fr 84px; gap: 8px; } .inst-step b { font-size: 13.5px; } }
+  .mock { height: 64px; border-radius: 10px; background: var(--bg); border: 1px solid var(--hairline); position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+  .mock .url { font-size: 9.5px; color: var(--text-muted); background: var(--surface-raised); border-radius: 6px; padding: 4px 7px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 96px; }
+  .mock .bar { position: absolute; left: 0; right: 0; height: 22px; display: flex; align-items: center; justify-content: space-around; background: var(--surface-raised); color: var(--text-faint); }
+  .mock .bar.bottom { bottom: 0; } .mock .bar.top { top: 0; }
+  .mock .bar i { font-style: normal; font-size: 11px; line-height: 1; width: 18px; height: 16px; display: grid; place-items: center; border-radius: 4px; }
+  .mock .bar i.hl { background: var(--accent); color: #fff; }
+  .mock .bar svg { width: 11px; height: 11px; }
+  .mock .menu { position: absolute; inset: 6px 6px; display: flex; flex-direction: column; justify-content: center; gap: 2px; }
+  .mock .menu div { font-size: 8.5px; color: var(--text-muted); padding: 2px 5px; border-radius: 4px; white-space: nowrap; overflow: hidden; }
+  .mock .menu div.hl { background: var(--accent-soft); color: var(--text); font-weight: 700; }
+  .mock .home { display: grid; grid-template-columns: repeat(4, 16px); gap: 5px; }
+  .mock .home i { width: 16px; height: 16px; border-radius: 4px; background: var(--surface-raised); }
+  .mock .home img { width: 16px; height: 16px; border-radius: 4px; outline: 1.5px solid var(--accent); outline-offset: 1px; }
 </style>
 </head>
 <body>
@@ -1033,7 +1064,7 @@
     </div>
 
     <h3>Ayuda</h3>
-    <div class="row" style="margin-top:0"><button class="pill-btn ghost" id="tourAgain">Ver el tutorial otra vez</button></div>
+    <div class="row" style="margin-top:0"><button class="pill-btn ghost" id="instOpen">📲 Añadir a la pantalla de inicio</button><button class="pill-btn ghost" id="tourAgain">Ver el tutorial otra vez</button></div>
     <div class="row"><button class="pill-btn" id="closeSettings">Cerrar</button></div>
   </div>
 </div>
@@ -1058,6 +1089,24 @@
     <div class="guide-tabs" id="guideTabs"></div>
     <div id="guideBody"></div>
     <div class="row"><button class="pill-btn" id="closeGuide">Cerrar</button></div>
+  </div>
+</div>
+
+<div class="sheet-backdrop" id="installSheet">
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="instTitle">
+    <div class="inst-hero">
+      <div class="ic">📲</div>
+      <h2 id="instTitle">Añádela a tu pantalla de inicio</h2>
+      <p>Se abrirá a pantalla completa como una app más, funcionará sin conexión y podrá avisarte cada día.</p>
+    </div>
+    <div class="inst-tabs" id="instTabs"></div>
+    <button class="pill-btn inst-now" id="instNow" hidden>Instalar con un toque</button>
+    <div class="inst-warn" id="instWarn" hidden></div>
+    <ol class="inst-steps" id="instSteps"></ol>
+    <div class="row" style="margin-top:14px">
+      <button class="pill-btn" id="instDone">Ya la he añadido</button>
+      <button class="pill-btn ghost" id="instLater">Ahora no</button>
+    </div>
   </div>
 </div>
 
@@ -1676,7 +1725,7 @@
       : on ? "Te avisaremos a las " + remTime() + " si aún no has superado el reto del día."
       : Notification.permission === "denied" ? "Notificaciones bloqueadas en los ajustes del móvil." : "Desactivado";
   }
-  function anySheetOpen() { return tour || ["sheet", "settings", "guideSheet", "introSheet", "remSheet", "goalSheet"].some(function (id) { return $(id).classList.contains("open"); }) || !!document.querySelector(".medal-reveal.open"); }
+  function anySheetOpen() { return tour || ["sheet", "settings", "guideSheet", "introSheet", "remSheet", "goalSheet", "installSheet"].some(function (id) { return $(id).classList.contains("open"); }) || !!document.querySelector(".medal-reveal.open"); }
   function maybeAskReminder() {
     if (!pushSupported() || rem.state || Notification.permission === "denied") return;
     setTimeout(function () {
@@ -1794,7 +1843,7 @@
       { el: "testBtn", t: "Modo test", h: "Te pregunta todos los kana elegidos una sola vez y al final te da una <b>nota sobre 10</b> con tus fallos, para repasarlos." },
       { el: "reviewBtn", t: "Repasar fallos", h: "La app recuerda los kana que fallas. Aquí los repasas <b>empezando por el que más fallas</b>; cada acierto le resta un fallo, y los que vuelvas a fallar se repiten enseguida." },
       { el: "guideBtn", t: "Guía de pronunciación", h: "La tabla de todos los kana con su romaji, por separado para <b>hiragana</b> y <b>katakana</b>, y trucos para pronunciarlos bien." + (canSpeak ? " Toca un kana para oírlo." : "") },
-      { el: "streakBtn", t: "Racha y medallas", h: "Tu racha de días seguidos. Tócala para ver tus <b>medallas</b>, cambiar de <b>paleta de colores</b> y activar el <b>recordatorio diario</b>. ¡A practicar!" }
+      { el: "streakBtn", t: "Racha y medallas", h: "Tu racha de días seguidos. Tócala para ver tus <b>medallas</b>, cambiar de <b>paleta de colores</b> y activar el <b>recordatorio diario</b>." + (isStandalone() ? "" : " Ahí también tienes la guía para <b>añadir la app a la pantalla de inicio</b>.") + " ¡A practicar!" }
     ];
   }
   function startTour(done) {
@@ -1841,6 +1890,106 @@
     window.addEventListener("resize", place);
     show();
   }
+  /* ================= Añadir a la pantalla de inicio =================
+     La primera vez que se abre en el navegador (no como app instalada) se explica cómo añadirla.
+     Se detecta el móvil (iPhone, Samsung u otro Android) y se puede cambiar a mano. En Android, si el navegador
+     lo permite, aparece además el botón «Instalar con un toque». */
+  var INSTALL_KEY = "kaname-kana.install.v1";
+  var installPrompt = null;
+  window.addEventListener("beforeinstallprompt", function (e) { e.preventDefault(); installPrompt = e; renderInstallNow(); });
+  window.addEventListener("appinstalled", function () { installPrompt = null; lsSet(INSTALL_KEY, "instalada"); track("app-instalada"); });
+  function isStandalone() { return (window.matchMedia && matchMedia("(display-mode: standalone)").matches) || navigator.standalone === true; }
+  function detectDevice() {
+    var ua = navigator.userAgent;
+    if (/iPhone|iPad|iPod/.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1)) return "iphone";
+    if (/SamsungBrowser/i.test(ua)) return "samsung";
+    if (/Android/i.test(ua)) return /SM-|Samsung/i.test(ua) && !/Chrome\/[\d.]+ Mobile/.test(ua) ? "samsung" : "android";
+    return "";
+  }
+  var instDevice = detectDevice() || "iphone";
+  var SHARE_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 8l5-5 5 5"/><path d="M5 12v8h14v-8"/></svg>';
+  function mockUrl() { return '<div class="mock"><span class="url">🔒 ' + location.host + location.pathname.replace(/\/$/, "") + '</span></div>'; }
+  function mockBar(where, icons) { return '<div class="mock"><div class="bar ' + where + '">' + icons.map(function (i) { return '<i' + (i[1] ? ' class="hl"' : "") + '>' + i[0] + '</i>'; }).join("") + '</div></div>'; }
+  function mockMenu(items) { return '<div class="mock"><div class="menu">' + items.map(function (i) { return '<div' + (i[1] ? ' class="hl"' : "") + '>' + i[0] + '</div>'; }).join("") + '</div></div>'; }
+  function mockHome() { return '<div class="mock"><div class="home"><i></i><i></i><img src="icons/icon-192.png" alt=""><i></i><i></i><i></i><i></i><i></i></div></div>'; }
+  var INSTALL_GUIDES = {
+    iphone: { label: "iPhone", warn: "Hazlo antes de empezar: en iPhone, lo que hagas en Safari no pasa a la app de la pantalla de inicio.", steps: [
+      ["Ábrela en Safari", "Es la forma más fiable en iPhone.", "En Chrome también vale: el botón Compartir está en la barra de dirección.", mockUrl],
+      ["Toca «Compartir»", "El cuadrado con una <em>flecha hacia arriba</em>, en la barra de abajo (en iPad, arriba).", "Si no ves la barra, toca abajo del todo o «···».", function () { return mockBar("bottom", [["‹"], ["›"], [SHARE_SVG, 1], ["▢"], ["⧉"]]); }],
+      ["«Añadir a pantalla de inicio»", "Desliza el menú hacia abajo hasta encontrar la opción y tócala.", "", function () { return mockMenu([["Copiar"], ["Añadir a favoritos"], ["Añadir a pantalla de inicio ⊞", 1], ["Imprimir"]]); }],
+      ["Pulsa «Añadir»", "Arriba a la derecha. Abre KanaMe <em>siempre desde el icono</em>: ahí se guarda tu progreso.", "", mockHome]
+    ] },
+    samsung: { label: "Samsung", steps: [
+      ["Ábrela en Samsung Internet", "El navegador de Samsung (también vale Chrome: mira la pestaña Android).", "", mockUrl],
+      ["Toca el menú ≡", "Las <em>tres rayas</em>, abajo a la derecha.", "", function () { return mockBar("bottom", [["‹"], ["›"], ["⌂"], ["▢"], ["≡", 1]]); }],
+      ["«Añadir página a» → «Pantalla de inicio»", "Según la versión puede llamarse «Añadir a pantalla de inicio».", "", function () { return mockMenu([["Marcadores"], ["Añadir página a  ›", 1], ["Descargas"], ["Ajustes"]]); }],
+      ["Confirma con «Añadir»", "El icono aparece en tu pantalla. Abre KanaMe <em>siempre desde ahí</em>.", "", mockHome]
+    ] },
+    android: { label: "Android", steps: [
+      ["Ábrela en Chrome", "El navegador de Google, que viene en casi todos los Android.", "", mockUrl],
+      ["Toca el menú ⋮", "Los <em>tres puntos</em>, arriba a la derecha.", "", function () { return mockBar("top", [["⌂"], ["🔒"], ["⧉"], ["⋮", 1]]); }],
+      ["«Añadir a pantalla de inicio»", "O «Instalar aplicación», según la versión.", "", function () { return mockMenu([["Nueva pestaña"], ["Historial"], ["Añadir a pantalla de inicio", 1], ["Compartir…"]]); }],
+      ["Confirma con «Instalar»", "El icono aparece en tu pantalla. Abre KanaMe <em>siempre desde ahí</em>.", "", mockHome]
+    ] }
+  };
+  function renderInstallNow() {
+    var b = $("instNow"); if (!b) return;
+    b.hidden = !installPrompt || instDevice === "iphone";
+  }
+  function renderInstall() {
+    var tabs = $("instTabs"); tabs.innerHTML = "";
+    ["iphone", "samsung", "android"].forEach(function (d) {
+      var b = el("button", d === instDevice ? "on" : null, INSTALL_GUIDES[d].label);
+      b.onclick = function () { instDevice = d; renderInstall(); };
+      tabs.appendChild(b);
+    });
+    var g = INSTALL_GUIDES[instDevice];
+    $("instWarn").hidden = !g.warn; $("instWarn").textContent = g.warn || "";
+    var ol = $("instSteps"); ol.innerHTML = "";
+    g.steps.forEach(function (s, i) {
+      var li = el("li", "inst-step");
+      li.appendChild(el("span", "n", String(i + 1)));
+      var tx = el("div"); tx.appendChild(el("b", null, s[0]));
+      var sp = el("span"); sp.innerHTML = s[1]; tx.appendChild(sp);
+      if (s[2]) tx.appendChild(el("small", null, s[2]));
+      li.appendChild(tx);
+      var m = el("div"); m.innerHTML = s[3](); li.appendChild(m.firstChild);
+      ol.appendChild(li);
+    });
+    renderInstallNow();
+  }
+  var installAfter = null;
+  function openInstall(after) {
+    installAfter = after || null;
+    renderInstall();
+    $("installSheet").classList.add("open");
+    $("installSheet").querySelector(".sheet").scrollTop = 0;
+    track("guia-instalar-" + instDevice);
+  }
+  function closeInstall(state) {
+    if (state) lsSet(INSTALL_KEY, state);
+    $("installSheet").classList.remove("open");
+    var a = installAfter; installAfter = null; if (a) a();
+  }
+  $("instDone").onclick = function () { track("instalar-hecho-" + instDevice); closeInstall("hecho"); };
+  $("instLater").onclick = function () { closeInstall("luego"); };
+  $("instNow").onclick = function () {
+    if (!installPrompt) return;
+    installPrompt.prompt();
+    installPrompt.userChoice.then(function (r) {
+      track("instalar-boton-" + (r && r.outcome === "accepted" ? "aceptado" : "cancelado"));
+      if (r && r.outcome === "accepted") closeInstall("instalada");
+    }).catch(function () {});
+    installPrompt = null; renderInstallNow();
+  };
+  // Primera vez en el navegador del móvil: se muestra antes que nada (en iPhone el progreso no pasa a la app instalada)
+  function maybeAskInstall(done) {
+    if (isStandalone() || lsGet(INSTALL_KEY) || !detectDevice()) return false;
+    openInstall(done);
+    return true;
+  }
+  $("instOpen").onclick = function () { $("settings").classList.remove("open"); openInstall(); };
+  $("instOpen").hidden = isStandalone();
   $("tourAgain").onclick = function () { $("settings").classList.remove("open"); setTimeout(function () { startTour(); }, 250); };
 
   // Inicio
@@ -1851,7 +2000,8 @@
   var afterTour = function () { if (!maybeShowStreakIntro()) maybeAskReminder(); };
   $("goalNote").textContent = DAILY_GOAL; $("introGoal").textContent = DAILY_GOAL;
   var tourThen = function () { if (!lsGet(TOUR_KEY)) setTimeout(function () { startTour(afterTour); }, 300); else afterTour(); };
-  if (!maybeAskGoal(tourThen)) tourThen();
+  var firstRun = function () { if (!maybeAskGoal(tourThen)) tourThen(); };
+  if (!maybeAskInstall(firstRun)) firstRun();
 
   if ("serviceWorker" in navigator && location.protocol === "https:") {
     navigator.serviceWorker.register("sw.js").catch(function () {});
